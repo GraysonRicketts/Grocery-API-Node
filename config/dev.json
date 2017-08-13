@@ -1,0 +1,4 @@
+{
+    "DBHost": "mongodb://localhost:27017/grocery",
+    "SaltRounds": 10 // TODO: Check if appropriate number of salt rounds
+}
