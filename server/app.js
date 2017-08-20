@@ -1,6 +1,7 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import passport from 'passport'
+import session from 'express-session'
 
 import routes from './routes'
 
@@ -12,12 +13,17 @@ const app = express()
 
 // Middleware
 app.use(bodyParser.json())
+app.use(session({
+    secret: 'TODO: Move secret to more secure location',
+    resave: false,
+    saveUninitialized: false
+}))
 
-// TODO: Express sessions
-
+// Authentication
 app.use(passport.initialize())
-// TODO: Passport session
+app.use(passport.session())
 
+// Routes
 app.use('/api', routes)
 
 export default app

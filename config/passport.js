@@ -25,3 +25,19 @@ passport.use(new LocalStrategy((email, password, done) => {
             return done(err)
         })
 }))
+
+passport.serializeUser((user, done) => {
+    done(null, user._id)
+})
+
+passport.deserializeUser((id, done) => {
+    db.User
+        .findById(id)
+        .then((user) => {
+            done(null, user)
+        }) 
+        .catch((err) => {
+            console.error('Error deserializing user: ' + err.message)
+            done(err)
+        })
+})
