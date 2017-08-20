@@ -1,6 +1,8 @@
 import mongoose from 'mongoose'
 
 import Item from './Item'
+import BasketItem from './BasketItem'
+
 
 const { Schema } = mongoose
 
@@ -11,17 +13,6 @@ const { Schema } = mongoose
 //     createdAt: { type: Date, default: Date.now },
 // })
 
-const basketItem = new Schema({
-    _item: { 
-      type: Schema.Types.ObjectId,
-      ref: 'Item',
-      required: true
-    },
-    quantity: { type: Number },
-    size: { type: String }, // TODO: Expand to have multiple types of size or category list to choose from
-    note: { type: String }
-})
-
 const basketSchema = new Schema({
     _user: { 
       type: Schema.Types.ObjectId,
@@ -29,7 +20,7 @@ const basketSchema = new Schema({
       required: true
     },
     _items: {
-        type: [ basketItem ],
+        type: [ BasketItem.Schema ],
         default: []
     },
     customItems: { 

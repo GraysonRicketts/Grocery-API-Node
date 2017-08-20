@@ -13,6 +13,7 @@ basketController.get = (req, res) => {
         .findById(basketId)
         .populate({
             path: '_items._item',
+            model: 'Item',
             select: 'title category brand description'
         })
         .then((basket) => {
@@ -34,54 +35,67 @@ basketController.post = (req, res) => {
 
     // TODO: Validate basket belongs to current user
 
-    // TODO: Validate basket items
+    // TODO: Validate req.body.newItems
     const newItems = req.body
 
     db.Basket
         .findById(basketId)
         .then((basket) => {
-            let updateItems = { 
-                $push: { _items: [] },
-                $set: { _items: [] }
+            try {
+                const badUpdates = updateBasket(basket, newItems)
+            }
+            catch (err) {
+                res.status(500).json({
+                    message: 'Failed to update basket: ' + err.message
+                })
             }
 
-            // TODO: Check if items in basket already => update them
-            
-            // Map for fast checking
-            // TODO: Possibly move map to object, so that doesn't have to be created each time
-            const itemIdIndexMap = new Map()
-            basket._items.map((item, index) => { itemIdIndexMap.set(item,index) })
-
-            for (item in newItems) {
-                let index = itemIdIndexMap.get(item._id)
-                
-                if (index === undefined) {
-                    updateItems.$push._items.push(item)
-                }
-                else {
-                    updateItems.$set._items.push(item)
-                }
-            }
-
+            basket.markModified('_items')
             basket
-                .update(updateItems)
-                .then(() => {
-                    res.status(200).json({
-                        message: 'Basket updated',
-                        updateItems: updateItems
-                    })
+                .save((err) => {
+                    if (err) {
+                        res.status(500).json({
+                            message: 'Failed to save updates: ' + err.message
+                        })
+                    }
                 })
-                .catch((err) => {
-                    res.status(500).json({
-                        message: err
-                    })
-                })
-        })
-        .catch((err) => {
+
+            
+            res.status(200).json({
+                success: true
+            })
+        }).catch((err) => {
             res.status(500).json({
-                message: err
+                err
             })
         })
+}
+
+function updateBasket(basket, newItems) {
+    basket._items.forEach((item, index) => {
+        const itemId = item._item.toString()
+        
+        // Update existing items
+        if (itemId in newItems) { 
+            for (let field in newItems[itemId]) {
+                basket._items[index][field] = newItems[itemId][field]
+            }
+
+            delete newItems[itemId]
+        }
+    }, this)
+
+    // Add new items
+    for (let itemId in newItems) {
+        let tempItem = {}
+
+        tempItem._item = itemId
+        for (let field in newItems[itemId]) {
+            tempItem[field] = newItems[itemId][field]
+        }
+
+        basket._items.push(new db.BasketItem(tempItem))
+    }
 }
 
 export default basketController

@@ -11,7 +11,7 @@ mongoose.connect (
 )
 
 mongoose.connection.on('error', (err) => {  
-    console.err('Mongoose default connection error: ' + err)
+    console.error('Mongoose default connection error: ' + err)
 })
 
 mongoose.connection.on('disconnected', () => {  
