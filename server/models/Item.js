@@ -1,5 +1,7 @@
 import mongoose from 'mongoose'
 
+
+// TODO: Consider changin item to a readonly database
 const { Schema } = mongoose
 
 const Categories = [

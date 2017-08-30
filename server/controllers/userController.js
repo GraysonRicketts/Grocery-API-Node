@@ -11,9 +11,13 @@ const userController = {};
 // }
 
 userController.login = (req, res) => {
+    // TODO: Make sure user is not logged in
+    
     res.status(200).json({
         success: true,
-        message: 'Successfully logged in'
+        message: 'Successfully logged in',
+        session: req.session,
+        user: req.user
     })
 }
 
@@ -22,6 +26,8 @@ userController.signup = (req, res) => {
         email,
         password 
     } = req.body
+
+    // TODO: Make sure user is not logged in
 
     // TODO: Validate input
     //      TODO: Password must be less than 72 character for encryption

@@ -1,13 +1,12 @@
 import db from './../models/'
 
+
 const basketController = {}
 
 basketController.get = (req, res) => {
     const {
         basketId
     } = req.params
-
-    // TODO: Validate basket belongs to current user
 
     db.Basket
         .findById(basketId)
@@ -32,8 +31,6 @@ basketController.post = (req, res) => {
     const {
         basketId
     } = req.params
-
-    // TODO: Validate basket belongs to current user
 
     // TODO: Validate req.body.newItems
     const newItems = req.body
