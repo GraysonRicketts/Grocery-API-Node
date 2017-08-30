@@ -6,38 +6,39 @@ import db from './../server/models'
 
 const LocalStrategy = require('passport-local').Strategy;
 
-passport.use(new LocalStrategy((email, password, done) => {
-    db.User
-        .findOne({ email: email })
-        .exec()
-        .then((user) => {
-            bcrypt
-                .compare(password, user.password)
-                .then((res) => {
-                    if (!user || !res) {
-                        return done(null, false, { message: 'User and/or password incorrect' })
-                    }
+passport.use(new LocalStrategy({
+        usernameField: 'email'
+    },
+    (email, password, done) => {
+        db.User
+            .findOne({ email: email })
+            .exec()
+            .then((user) => {
+                bcrypt
+                    .compare(password, user.password)
+                    .then((res) => {
+                        if (!user || !res) {
+                            return done(null, false, { message: 'User and/or password incorrect' })
+                        }
 
-                    return done(null, user)
-                })  
-        })
-        .catch((err) => {
-            return done(err)
-        })
-}))
+                        return done(null, user)
+                    })  
+            })
+            .catch((err) => {
+                return done(err)
+            })
+    }))
 
 passport.serializeUser((user, done) => {
-    done(null, user._id)
+    const sessionUser = {
+        id: user._id,
+        basketId: user._basket
+    }
+    done(null, sessionUser)
 })
 
-passport.deserializeUser((id, done) => {
-    db.User
-        .findById(id)
-        .then((user) => {
-            done(null, user)
-        }) 
-        .catch((err) => {
-            console.error('Error deserializing user: ' + err.message)
-            done(err)
-        })
+passport.deserializeUser((sessionUser, done) => {
+    done(null, sessionUser)
 })
+
+export default passport;
