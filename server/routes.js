@@ -12,6 +12,7 @@ const routes = express()
 // User Routes
 routes.post('/login', passport.authenticate('local'), userController.login)
 routes.post('/signup', userController.signup)
+routes.post('/logout', userController.logout)
 
 // Bakset Routes
 routes.get('/basket/:basketId', basketController.get)

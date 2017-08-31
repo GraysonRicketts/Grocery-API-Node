@@ -8,6 +8,10 @@ basketController.get = (req, res) => {
         basketId
     } = req.params
 
+    if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false })
+    }
+
     db.Basket
         .findById(basketId)
         .populate({
@@ -32,7 +36,7 @@ basketController.post = (req, res) => {
         basketId
     } = req.params
 
-    // TODO: Validate req.body.newItems
+    // TODO: Validate newItems
     const newItems = req.body
 
     db.Basket
