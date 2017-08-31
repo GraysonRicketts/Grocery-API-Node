@@ -1,5 +1,4 @@
 import bcrypt from 'bcrypt'
-import config from 'config'
 
 import db from './../models'
 
@@ -33,7 +32,7 @@ userController.signup = (req, res) => {
 
     // Hash password
     bcrypt
-        .hash(password, config.SaltRounds)
+        .hash(password, process.env.SALT_ROUNDS)
         .then((hash) => {
             let user = new db.User({
                 email,

@@ -5,10 +5,12 @@ import redis from 'redis'
 import session from 'express-session'
 import connectRedis from 'connect-redis'
 
-
 import routes from './routes'
 import passport from './../config/passport'
 
+
+// Set node environment variables
+require('dotenv').config()
 
 // DB Startup and Configuration
 require('./../config/db')

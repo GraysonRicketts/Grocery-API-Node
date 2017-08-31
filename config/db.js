@@ -1,9 +1,8 @@
 import mongoose from 'mongoose'
-import config from 'config'
 
 
 mongoose.connect (
-    config.DBHost, {
+    process.env.DB_HOST, {
         useMongoClient: true
     }, () => {
         console.log('Connected to mongodb...')
