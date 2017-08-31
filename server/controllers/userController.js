@@ -15,9 +15,6 @@ userController.login = (req, res) => {
     
     res.status(200).json({
         success: true,
-        message: 'Successfully logged in',
-        session: req.session,
-        user: req.user
     })
 }
 
@@ -27,7 +24,9 @@ userController.signup = (req, res) => {
         password 
     } = req.body
 
-    // TODO: Make sure user is not logged in
+    if (req.isAuthenticated()) {
+        return res.status(400).json({ success: false })
+    }
 
     // TODO: Validate input
     //      TODO: Password must be less than 72 character for encryption
@@ -59,6 +58,8 @@ userController.signup = (req, res) => {
                                 success: true,
                                 data: newUser,
                             })
+
+                            passport.authenticate('local')
                         })
                         .catch((err) => {
                             // TODO: Remove user b/c basket creation failed
@@ -78,6 +79,13 @@ userController.signup = (req, res) => {
                 message: err.message
             })
         })
+}
+
+userController.logout = (req, res) => {
+    const val = req.logout()
+    res.status(200).json({
+        success: true
+    })
 }
 
 // userController.delete = (req, res) => {
