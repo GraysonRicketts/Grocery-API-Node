@@ -1,0 +1,10 @@
+{
+    "items": [
+        { 
+            "title": "Apple",
+            "category": "Produce",
+            "brand": "Test", 
+            "description": "This is a test"
+        }
+    ]
+}
