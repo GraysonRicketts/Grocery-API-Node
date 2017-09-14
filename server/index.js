@@ -1,12 +1,9 @@
 import app from './app'
 
 
-// Set node environment variables
-require('dotenv').config()
-
-// DB Startup and Configuration
-require('./../config/db')
+// Pre-app initializations
+require('./../config')
 
 app.listen(3000, () => {
-    console.log('Running on port 3000...')
+    console.log('App running on port 3000...')
 })

@@ -1,13 +1,7 @@
 import mongoose from 'mongoose'
 
 
-mongoose.connect (
-    process.env.DB_HOST, {
-        useMongoClient: true
-    }, () => {
-        console.log('Connected to mongodb...')
-    }
-)
+mongoose.connect(process.env.DB_HOST, { useMongoClient: true })
 
 mongoose.connection.on('error', (err) => {  
     console.error('Mongoose default connection error: ' + err)
