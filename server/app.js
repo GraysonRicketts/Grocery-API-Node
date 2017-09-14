@@ -9,12 +9,6 @@ import routes from './routes'
 import passport from './../config/passport'
 
 
-// Set node environment variables
-require('dotenv').config()
-
-// DB Startup and Configuration
-require('./../config/db')
-
 const RedisStore = connectRedis(session)
 const client = redis.createClient()
 const app = express()
