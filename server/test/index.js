@@ -1,4 +1,7 @@
+import ItemTest from './Item'
+
 // Pre-app initializations
 require('./../../config')
 
-require('./Item')
+
+ItemTest.runAllTests()

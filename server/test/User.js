@@ -8,7 +8,7 @@ import seeds from './../../seeds'
 const should = chai.should()
 
 
-const ItemTest = {}
+const UserTest = {}
 
 function resetItemCollection() {
     beforeEach((done) => {
@@ -22,7 +22,7 @@ function resetItemCollection() {
     })
 }
 
-function testGettingNoItems() {
+function testGettingNoUsers() {
     it('it should GET no the items when no items exist', (done) => {
         db.Item.find()
             .then((items) => {
@@ -37,7 +37,7 @@ function testGettingNoItems() {
 
 function seedItemDb() {
     it('it should seed the database', (done) => {
-        seeds.ItemSeeder.seed().then(() => {
+        seeds.ItemSeed.seed().then(() => {
             db.Item.find()
             .then((items) => {
                 items.length.should.be.eql(7)
@@ -50,19 +50,19 @@ function seedItemDb() {
     })
 }
 
-ItemTest.dbSetup = function() {
+UserTest.dbSetup = function() {
     resetItemCollection()
 
     describe('Items DB Setup', () => {
-        testGettingNoItems()
+        testGettingNoUsers()
         seedItemDb()
     })
 }
 
-ItemTest.runAllTests = function() {
+UserTest.runAllTests = function() {
     describe('Item', () => {
-        ItemTest.dbSetup()
+        UserTest.dbSetup()
     })
 }
 
-export default ItemTest
+export default UserTest

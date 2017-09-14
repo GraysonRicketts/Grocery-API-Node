@@ -1,8 +1,44 @@
 {
-    "items": [
+    "data": [
         { 
             "title": "Apple",
             "category": "Produce",
+            "brand": "Test", 
+            "description": "This is a test"
+        },
+        { 
+            "title": "2% Milk",
+            "category": "Dairy",
+            "brand": "Test", 
+            "description": "This is a test"
+        },
+        { 
+            "title": "Porterhouse Steak",
+            "category": "Meat",
+            "brand": "Test", 
+            "description": "This is a test"
+        },
+        { 
+            "title": "Salmon",
+            "category": "Seafood",
+            "brand": "Test", 
+            "description": "This is a test"
+        },
+        { 
+            "title": "Peas",
+            "category": "Frozen",
+            "brand": "Test", 
+            "description": "This is a test"
+        },
+        { 
+            "title": "Absolut Vodka",
+            "category": "Beer/Wine/Liquor",
+            "brand": "Test", 
+            "description": "This is a test"
+        },
+        { 
+            "title": "Pasta",
+            "category": "Dry Goods/Pantry",
             "brand": "Test", 
             "description": "This is a test"
         }
