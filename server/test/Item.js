@@ -12,7 +12,7 @@ const ItemTest = {}
 
 function resetItemCollection() {
     beforeEach((done) => {
-        db.Item.remove({})
+        db.Item.remove()
             .then(() => {
                 done()
             })
