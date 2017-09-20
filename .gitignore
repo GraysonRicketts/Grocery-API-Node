@@ -62,6 +62,3 @@ typings/
 
 # Visual studio settings
 .vscode/
-
-# Compiled project
-bin
