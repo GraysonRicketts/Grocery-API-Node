@@ -1,4 +1,5 @@
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
+import passport from 'passport'
 
 import db from './../models'
 
@@ -31,9 +32,8 @@ userController.signup = (req, res) => {
     //      TODO: Password must be less than 72 character for encryption
 
     // Hash password
-    bcrypt
-        .hash(password, process.env.SALT_ROUNDS)
-        .then((hash) => {
+    bcrypt.genSalt(parseInt(process.env.SALT_ROUNDS)).then((salt) => {
+        bcrypt.hash(password, salt).then((hash) => {
             let user = new db.User({
                 email,
                 password: hash
@@ -53,12 +53,11 @@ userController.signup = (req, res) => {
                     basket
                         .save()
                         .then((newBasket) => {
-                            res.status(200).json({
-                                success: true,
-                                data: newUser,
-                            })
-
-                            passport.authenticate('local')
+                            passport.authenticate('local')(req, res, () => {
+                                    res.status(200).json({
+                                        success: true
+                                    })
+                                })
                         })
                         .catch((err) => {
                             // TODO: Remove user b/c basket creation failed
@@ -72,10 +71,11 @@ userController.signup = (req, res) => {
                         message: err.message,
                     })
                 })
-        })
-        .catch((err) => {
-            res.status(500).json({
-                message: err.message
+            })
+            .catch((err) => {
+                res.status(500).json({
+                    message: err.message
+                })
             })
         })
 }

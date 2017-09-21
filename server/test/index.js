@@ -1,14 +1,18 @@
 import db from './../models'
 import seeds from './../../seeds'
+import BaseTester from './BaseTester'
 import ItemTester from './Item'
 import UserTester from './User'
+import app from './../app'
 
 // Pre-app initializations
 require('./../../config')
 
 
-const itemTester = new ItemTester(db.Item, seeds.ItemSeeder, 7)
-const userTester = new UserTester(db.User, seeds.UserSeeder, 1)
+BaseTester.resetCollections()
+
+const itemTester = new ItemTester(db.Item)
+const userTester = new UserTester(db.User, app)
 
 itemTester.runAllTests()
 userTester.runAllTests()

@@ -1,6 +1,10 @@
 import mongoose from 'mongoose'
 
 
+if (process.env.NODE_ENV === 'test') {
+    process.env.DB_HOST = 'mongodb://localhost:27017/test-grocery'
+}
+
 mongoose.connect(process.env.DB_HOST, { useMongoClient: true })
 
 mongoose.connection.on('error', (err) => {  

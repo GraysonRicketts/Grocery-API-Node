@@ -1,62 +1,51 @@
 import chai from 'chai'
 
 import app from './../app'
+import db from './../models'
 
 const should = chai.should()
 
 
 class BaseTester {
-    constructor(schema, seeder, numSeeds) {
+    constructor(schema, app) {
         this.schema = schema
-        this.seeder = seeder
-        this.numSeeds = numSeeds
+        this.app = app
     }
 
-    setupDb() {
-        this.resetCollection()
-
-        describe('DB Setup', () => {
-            this.testCollectionEmpty()
-            this.testSeedingDb(this.numSeeds)
-        })
-    }
-
-    resetCollection() {
+    static resetCollections() {
         beforeEach((done) => {
-        this.schema.remove()
-            .then(() => {
-                done()
-            })
-            .catch((err) => {
-                done(err)
-            })
-        })
-    }
-
-    testSeedingDb(numEntriesInSeed) {
-        it('it should seed the database', (done) => {
-        this.seeder.seed().then(() => {
-            this.schema.find()
-                .then((documents) => {
-                    documents.length.should.be.eql(numEntriesInSeed)
+            let removalPromises = []
+            
+            for (let collection in db) {
+                removalPromises.push(
+                    db[collection].remove()
+                        .catch((err) => {
+                            done(err)
+                        })
+                )
+            }
+            
+            Promise.all(removalPromises)
+                .then(() => {
                     done()
                 })
                 .catch((err) => {
                     done(err)
                 })
-            })
         })
     }
 
     testCollectionEmpty() {
-        it('there should be nothing in the collection', (done) => {
-        this.schema.find()
-            .then((documents) => {
-                documents.length.should.be.eql(0)
-                done()
-            })
-            .catch((err) => {
-                done(err)
+        describe('DB Cleanup', () => {
+            it('there should be nothing in the collection', (done) => {
+                this.schema.find()
+                    .then((documents) => {
+                        documents.length.should.be.eql(0)
+                        done()
+                    })
+                    .catch((err) => {
+                        done(err)
+                })
             })
         })
     }
