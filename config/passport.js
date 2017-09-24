@@ -10,7 +10,7 @@ passport.use(new LocalStrategy({
         usernameField: 'email'
     }, (email, password, done) => {
             db.User
-                .findOne({ email: email })
+                .findOne({ email: email }).exec()
                 .then((user) => {
                     if (!user) {
                         throw('User not found')

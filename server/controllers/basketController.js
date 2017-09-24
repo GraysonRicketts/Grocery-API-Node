@@ -13,7 +13,7 @@ basketController.get = (req, res) => {
     }
 
     db.Basket
-        .findById(basketId)
+        .findById(basketId).exec()
         .populate({
             path: '_items._item',
             model: 'Item',
@@ -40,7 +40,7 @@ basketController.post = (req, res) => {
     const newItems = req.body
 
     db.Basket
-        .findById(basketId)
+        .findById(basketId).exec()
         .then((basket) => {
             try {
                 const badUpdates = updateBasket(basket, newItems)
