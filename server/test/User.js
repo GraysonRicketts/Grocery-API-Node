@@ -11,7 +11,7 @@ class UserTester extends BaseTester {
     constructor(schema, app) {
         super(schema, app)
 
-        this.testUser = require('./../../seeds/data/user').data[0]
+        this.__testUser = require('./../../seeds/data/user').data[0]
     }
     runAllTests() {
         describe('User', () => {
@@ -29,17 +29,17 @@ class UserTester extends BaseTester {
 
     testValidSignup() {
         it('user should successfully signup', (done) => {
-            chai.request(this.app)
+            chai.request(this.__app)
                 .post('/api/signup')
-                .send(this.testUser)
+                .send(this.__testUser)
                 .end((err, res) => {
                     if (err) {
                         done(err)
                     }
 
                     res.should.have.status(200)
-                    this.schema.find({
-                            'email': this.testUser.email
+                    this.__schema.find({
+                            'email': this.__testUser.email
                         })
                         .then((documents) => {
                             documents.length.should.be.eql(1)
@@ -56,9 +56,9 @@ class UserTester extends BaseTester {
     testValidLogin() {
         it('user should login', (done) => {
 
-            chai.request(this.app)
+            chai.request(this.__app)
                 .post('/api/login')
-                .send(this.testUser)
+                .send(this.__testUser)
                 .end((err, res) => {
                     if (err) {
                         done(err)

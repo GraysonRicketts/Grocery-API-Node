@@ -16,7 +16,7 @@ class ItemTester extends BaseTester {
     testSeedingDb(numEntriesInSeed) {
         it('it should seed the database', (done) => {
             seeders.seedItems().then(() => {
-                this.schema.find()
+                this.__schema.find()
                     .then((documents) => {
                         documents.length.should.be.eql(numEntriesInSeed)
                         done()

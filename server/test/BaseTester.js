@@ -8,8 +8,8 @@ const should = chai.should()
 
 class BaseTester {
     constructor(schema, app) {
-        this.schema = schema
-        this.app = app
+        this.__schema = schema
+        this.__app = app
     }
 
     static resetCollections() {
@@ -38,7 +38,7 @@ class BaseTester {
     testCollectionEmpty() {
         describe('DB Cleanup', () => {
             it('there should be nothing in the collection', (done) => {
-                this.schema.find()
+                this.__schema.find()
                     .then((documents) => {
                         documents.length.should.be.eql(0)
                         done()
