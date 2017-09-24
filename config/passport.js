@@ -11,8 +11,11 @@ passport.use(new LocalStrategy({
     }, (email, password, done) => {
             db.User
                 .findOne({ email: email })
-                .exec()
                 .then((user) => {
+                    if (!user) {
+                        throw('User not found')
+                    }
+
                     bcrypt
                         .compare(password, user.password)
                         .then((res) => {
