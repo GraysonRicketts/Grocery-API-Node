@@ -1,15 +1,17 @@
 import chai from 'chai'
+import chaiHttp from 'chai-http'
 
 import app from './../app'
 import db from './../models'
 
 const should = chai.should()
+chai.use(chaiHttp)
 
 
 class BaseTester {
     constructor(schema, app) {
         this.__schema = schema
-        this.__app = app
+        this.__agent = chai.request.agent(app)
     }
 
     static resetCollections() {

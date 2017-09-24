@@ -1,10 +1,8 @@
 import chai from 'chai'
-import chaiHttp from 'chai-http'
 
 import BaseTester from './BaseTester'
 
 const should = chai.should()
-chai.use(chaiHttp)
 
 
 class UserTester extends BaseTester {
@@ -29,7 +27,7 @@ class UserTester extends BaseTester {
 
     testValidSignup() {
         it('user should successfully signup', (done) => {
-            chai.request(this.__app)
+            this.__agent
                 .post('/api/signup')
                 .send(this.__testUser)
                 .end((err, res) => {
@@ -56,7 +54,7 @@ class UserTester extends BaseTester {
     testValidLogin() {
         it('user should login', (done) => {
 
-            chai.request(this.__app)
+            this.__agent
                 .post('/api/login')
                 .send(this.__testUser)
                 .end((err, res) => {
