@@ -22,6 +22,7 @@ class UserTester extends BaseTester {
 
             describe('Login', () => {
                 this.testValidLogin()
+                this.testWrongPasswordLogin()
             })
 
             describe('Logout', () => {
@@ -67,6 +68,24 @@ class UserTester extends BaseTester {
                 })
                 .catch((err) => {
                     done(err)
+                })
+        })
+    }
+
+    testWrongPasswordLogin() {
+        it('user should not login with wrong password', (done) => {
+            let badUser = {}
+            badUser.email = this.__testUser.email
+            badUser.password = 'this is the wrong password'
+
+            this.__agent
+                .post('/api/login')
+                .send(badUser)
+                .then((res) => {
+                    done(new Error('Should not be able to login with wrong password'))
+                })
+                .catch((err) => {
+                    done()
                 })
         })
     }
