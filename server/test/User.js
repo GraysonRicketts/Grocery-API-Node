@@ -24,8 +24,8 @@ class UserTester extends BaseTester {
             describe('Login', () => {
                 this.testValidLogin()
                 this.testWrongPasswordLogin()
-                // TODO: test password hashed
-                // TODO: test user with incorrect email
+                this.testNonExistentEmailLogin()
+                this.testPasswordHashed()
             })
 
             describe('Logout', () => {
@@ -90,6 +90,8 @@ class UserTester extends BaseTester {
                 .then((res) => {
                     res.should.have.status(200)
                     done()
+
+                    this.testPasswordHashed()
                 })
                 .catch((err) => {
                     done(err)
@@ -98,7 +100,7 @@ class UserTester extends BaseTester {
     }
 
     testWrongPasswordLogin() {
-        it('user should not login with wrong password', (done) => {
+        it('user should not be able to login with wrong password', (done) => {
             let badUser = {}
             badUser.email = this.__testUser.email
             badUser.password = 'this is the wrong password'
@@ -111,6 +113,40 @@ class UserTester extends BaseTester {
                 })
                 .catch((err) => {
                     done()
+                })
+        })
+    }
+
+    testNonExistentEmailLogin() {
+        it('user should not be able to login with non-existent user', (done) => {
+            let badUser = {}
+            badUser.email = 'thisEmail@doesnotexist.com'
+            badUser.password = 'this is the wrong password'
+
+            this.__agent
+                .post('/api/login')
+                .send(badUser)
+                .then((res) => {
+                    done(new Error('Should not be able to login with non-existent user'))
+                })
+                .catch((err) => {
+                    done()
+                })
+        })
+    }
+
+    testPasswordHashed() {
+        it('user password should be hashed', (done) => {
+            this.__schema.find({ email: this.__testUser.email})
+                .then((user) => {
+                    if (user.password !== this.__testUser.password) {
+                        done()
+                    } else {
+                        done(new Error('Password is not hashed'))
+                    }
+                })
+                .catch((err) => {
+                    done(err)
                 })
         })
     }
