@@ -3,12 +3,18 @@ import seeders from './../../seeds'
 
 
 class ItemTester extends BaseTester {
+    constructor(schema, app) {
+        super(schema, app)
+
+        this.__numItems = require('./../../seeds/data/items').numItems
+    }
+
     runAllTests() {
         describe('Item', () => {
             this.testCollectionEmpty()
 
             describe('Seeding', () => {
-                this.testSeedingDb(7)
+                this.testSeedingDb()
             })
         })
     }
@@ -18,7 +24,7 @@ class ItemTester extends BaseTester {
             seeders.seedItems().then(() => {
                 this.__schema.find()
                     .then((documents) => {
-                        documents.length.should.be.eql(numEntriesInSeed)
+                        documents.length.should.be.eql(this.__numItems)
                         done()
                     })
                     .catch((err) => {
