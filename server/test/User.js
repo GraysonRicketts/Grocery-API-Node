@@ -9,7 +9,7 @@ class UserTester extends BaseTester {
     constructor(schema, app) {
         super(schema, app)
 
-        this.__testUser = require('./../../seeds/data/user').data[0]
+        this.__testUser = require('./../../seeds/data/user').testUser
     }
 
     runAllTests() {
@@ -18,11 +18,14 @@ class UserTester extends BaseTester {
             
             describe('Signup', () => {
                 this.testValidSignup()
+                this.testInvalidSignup()
             })
 
             describe('Login', () => {
                 this.testValidLogin()
                 this.testWrongPasswordLogin()
+                // TODO: test password hashed
+                // TODO: test user with incorrect email
             })
 
             describe('Logout', () => {
@@ -53,6 +56,28 @@ class UserTester extends BaseTester {
                 })
                 .catch((err) => {
                     done(err)
+                })
+        })
+    }
+
+    testInvalidSignup() {
+        it('user should not successfully signup', (done) => {
+            this.__agent
+                .post('/api/signup')
+                .send(this.__testUser)
+                .then((res) => {
+                    done(new Error('User should not have been able to signup'))
+                })
+                .catch((err) => {
+                    this.__schema.find()
+                        .then((documents) => {
+                            documents.length.should.be.eql(1)
+                        })
+                        .catch((err) => {
+                            done(err)
+                        })
+
+                    done()
                 })
         })
     }
@@ -90,7 +115,7 @@ class UserTester extends BaseTester {
         })
     }
 
-    testValidLogout(shouldBeValid) {
+    testValidLogout() {
         it('user should be able to logout', (done) => {
             this.__agent
                 .post('/api/logout')
@@ -105,7 +130,7 @@ class UserTester extends BaseTester {
         })
     }
 
-    testInvalidLogout(shouldBeValid) {
+    testInvalidLogout() {
         it('user should not be able to logout', (done) => {
             this.__agent
                 .post('/api/logout')
