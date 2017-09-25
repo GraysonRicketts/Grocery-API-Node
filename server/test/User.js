@@ -25,8 +25,8 @@ class UserTester extends BaseTester {
             })
 
             describe('Logout', () => {
-                this.testLogout(true)
-                this.testLogout(false)
+                this.testValidLogout()
+                this.testInvalidLogout()
             })
         })
     }
@@ -36,11 +36,7 @@ class UserTester extends BaseTester {
             this.__agent
                 .post('/api/signup')
                 .send(this.__testUser)
-                .end((err, res) => {
-                    if (err) {
-                        done(err)
-                    }
-
+                .then((res) => {
                     res.should.have.status(200)
                     this.__schema.find({
                             'email': this.__testUser.email
@@ -54,6 +50,9 @@ class UserTester extends BaseTester {
 
                     done()
                 })
+                .catch((err) => {
+                    done(err)
+                })
         })
     }
 
@@ -62,38 +61,40 @@ class UserTester extends BaseTester {
             this.__agent
                 .post('/api/login')
                 .send(this.__testUser)
-                .end((err, res) => {
-                    if (err) {
-                        done(err)
-                    }
-
+                .then((res) => {
                     res.should.have.status(200)
                     done()
+                })
+                .catch((err) => {
+                    done(err)
                 })
         })
     }
 
-    testLogout(shouldBeValid) {
-        let testMsg = 'user should '
-        if (!shouldBeValid) {
-            testMsg += 'not '
-        }
-        testMsg += 'be able to logout'
-
-        it(testMsg, (done) => {
+    testValidLogout(shouldBeValid) {
+        it('user should be able to logout', (done) => {
             this.__agent
                 .post('/api/logout')
                 .send()
-                .end((err, res) => {
-                    if (err) {
-                        if (res.status === 401) {
-                            done()
-                        } else {
-                            done(err)
-                        }
-                    }
-
+                .then((res) => {
                     res.should.have.status(200)
+                    done()
+                })
+                .catch((err) => {
+                    done(err)
+                })
+        })
+    }
+
+    testInvalidLogout(shouldBeValid) {
+        it('user should not be able to logout', (done) => {
+            this.__agent
+                .post('/api/logout')
+                .send()
+                .then((res) => {
+                    done(new Error('Incorrect status'))
+                })
+                .catch((err) => {
                     done()
                 })
         })
