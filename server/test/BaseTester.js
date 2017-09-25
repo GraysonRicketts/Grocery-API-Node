@@ -9,9 +9,9 @@ chai.use(chaiHttp)
 
 
 class BaseTester {
-    constructor(schema, app) {
+    constructor(schema, agent) {
         this.__schema = schema
-        this.__agent = chai.request.agent(app)
+        this.__agent = agent
     }
 
     static resetCollections() {
@@ -40,7 +40,7 @@ class BaseTester {
     }
 
     testCollectionEmpty() {
-        describe('DB Cleanup', () => {
+        describe('DB Initialization', () => {
             it('there should be nothing in the collection', (done) => {
                 this.__schema.find()
                     .then((documents) => {

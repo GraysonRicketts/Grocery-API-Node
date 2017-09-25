@@ -6,8 +6,8 @@ const should = chai.should()
 
 
 class UserTester extends BaseTester {
-    constructor(schema, app) {
-        super(schema, app)
+    constructor(schema, agent) {
+        super(schema, agent)
 
         this.__testUser = require('./../../seeds/data/user').testUser
     }
