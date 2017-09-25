@@ -1,5 +1,4 @@
 import bcrypt from 'bcryptjs'
-import passport from 'passport'
 
 import db from './../models'
 
@@ -11,8 +10,6 @@ const userController = {};
 // }
 
 userController.login = (req, res) => {
-    // TODO: Make sure user is not logged in
-    
     res.status(200).json({
         success: true,
     })
@@ -24,9 +21,7 @@ userController.signup = (req, res) => {
         password 
     } = req.body
 
-    if (req.isAuthenticated()) {
-        return res.status(400).json({ success: false })
-    }
+    
 
     // TODO: Validate input
     //      TODO: Password must be less than 72 character for encryption
@@ -53,7 +48,7 @@ userController.signup = (req, res) => {
                     basket
                         .save()
                         .then((newBasket) => {
-                            passport.authenticate('local')(req, res, () => {
+                            req.login(newUser, () => {
                                     res.status(200).json({
                                         success: true
                                     })
@@ -81,9 +76,11 @@ userController.signup = (req, res) => {
 }
 
 userController.logout = (req, res) => {
-    const val = req.logout()
-    res.status(200).json({
-        success: true
+    req.logout()    
+    req.session.destroy(() => {
+        res.status(200).json({
+            success: true
+        })
     })
 }
 
