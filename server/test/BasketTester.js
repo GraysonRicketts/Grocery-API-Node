@@ -9,8 +9,16 @@ class BasketTester extends BaseTester {
     runAllTests() {
         describe('Basket', () => {
             this.testCollectionSize(1)
-
-            this.testGettingNothing()
+            
+            this.__agent.post('/api/login')
+            .send()
+            .then(() => {
+                this.testGettingNothing()
+            })
+            .catch((err) => {
+                throw new Error('Unable to run basket tests because unable to login')
+            })
+            
         })
     }
 
