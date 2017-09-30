@@ -15,8 +15,8 @@ routes.post('/signup', userController.signup)
 routes.post('/logout', authenticationMiddleware(true), userController.logout)
 
 // Bakset Routes
-routes.get('/basket/:basketId', authenticationMiddleware(true), basketController.get)
-routes.post('/basket/:basketId', authenticationMiddleware(true), basketController.post)
+routes.get('/basket', authenticationMiddleware(true), basketController.get)
+routes.post('/basket', authenticationMiddleware(true), basketController.post)
 
 // TODO: Remove? Items maybe static.
 // Item Routes
