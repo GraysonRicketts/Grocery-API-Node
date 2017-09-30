@@ -6,12 +6,6 @@ const should = chai.should()
 
 
 class UserTester extends BaseTester {
-    constructor(schema, agent) {
-        super(schema, agent)
-
-        this.__testUser = require('./../../seeds/data/user').testUser
-    }
-
     runAllTests() {
         describe('User', () => {
             this.testCollectionSize(0)
