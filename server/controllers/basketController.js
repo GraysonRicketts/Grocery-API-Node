@@ -4,16 +4,8 @@ import db from './../models/'
 const basketController = {}
 
 basketController.get = (req, res) => {
-    const {
-        basketId
-    } = req.params
-
-    if (!req.isAuthenticated()) {
-        return res.status(401).json({ success: false })
-    }
-
     db.Basket
-        .findById(basketId).exec()
+        .findById(req.user._basket).exec()
         .populate({
             path: '_items._item',
             model: 'Item',
@@ -32,15 +24,11 @@ basketController.get = (req, res) => {
 }
 
 basketController.post = (req, res) => {
-    const {
-        basketId
-    } = req.params
-
     // TODO: Validate newItems
     const newItems = req.body
 
     db.Basket
-        .findById(basketId).exec()
+        .findById(req.user._basket).exec()
         .then((basket) => {
             try {
                 const badUpdates = updateBasket(basket, newItems)
@@ -71,6 +59,8 @@ basketController.post = (req, res) => {
             })
         })
 }
+
+// TODO: Add route to remove items from basket
 
 function updateBasket(basket, newItems) {
     basket._items.forEach((item, index) => {

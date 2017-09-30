@@ -11,7 +11,7 @@ class ItemTester extends BaseTester {
 
     runAllTests() {
         describe('Item', () => {
-            this.testCollectionEmpty()
+            this.testCollectionSize(0)
 
             describe('Seeding', () => {
                 this.testSeedingDb()
@@ -19,18 +19,22 @@ class ItemTester extends BaseTester {
         })
     }
 
-    testSeedingDb(numEntriesInSeed) {
-        it('it should seed the database', (done) => {
-            seeders.seedItems().then(() => {
-                this.__schema.find()
-                    .then((documents) => {
-                        documents.length.should.be.eql(this.__numItems)
-                        done()
+    testSeedingDb() {
+        it('should seed the database', (done) => {
+            seeders.seedItems()
+                .then(() => {
+                    this.__schema.find()
+                        .then((documents) => {
+                            documents.length.should.be.eql(this.__numItems)
+                            done()
+                        })
+                        .catch((err) => {
+                            done(err)
+                        })
                     })
                     .catch((err) => {
                         done(err)
                     })
-                })
         })
     }
 }

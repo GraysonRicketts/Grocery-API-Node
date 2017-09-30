@@ -1,11 +1,9 @@
 import chai from 'chai'
-import chaiHttp from 'chai-http'
 
 import app from './../app'
 import db from './../models'
 
 const should = chai.should()
-chai.use(chaiHttp)
 
 
 class BaseTester {
@@ -39,12 +37,12 @@ class BaseTester {
         })
     }
 
-    testCollectionEmpty() {
+    testCollectionSize(numDocuments) {
         describe('DB Initialization', () => {
-            it('there should be nothing in the collection', (done) => {
+            it('should be ' + numDocuments + ' documents in the collection at start of testing', (done) => {
                 this.__schema.find()
                     .then((documents) => {
-                        documents.length.should.be.eql(0)
+                        documents.length.should.be.eql(numDocuments)
                         done()
                     })
                     .catch((err) => {

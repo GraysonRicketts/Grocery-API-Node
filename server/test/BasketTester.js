@@ -8,7 +8,23 @@ const should = chai.should()
 class BasketTester extends BaseTester {
     runAllTests() {
         describe('Basket', () => {
-            this.testCollectionEmpty()
+            this.testCollectionSize(1)
+
+            this.testGettingNothing()
+        })
+    }
+
+    testGettingNothing() {
+        it ('should get no items', (done) => {
+            this.__agent.get('/api/basket')
+                .send()
+                .then((res) => {
+                    res.basket.length.should.be.eql(0)
+                    done()
+                })
+                .catch((err) => {
+                    done(err)
+                })
         })
     }
 

@@ -14,7 +14,7 @@ class UserTester extends BaseTester {
 
     runAllTests() {
         describe('User', () => {
-            this.testCollectionEmpty()
+            this.testCollectionSize(0)
             
             describe('Signup', () => {
                 this.testValidSignup()
@@ -33,6 +33,13 @@ class UserTester extends BaseTester {
                 this.testInvalidLogout()
             })
         })
+
+        // Log agent back in for basket tests
+        after(() => {
+            this.__agent
+                .post('/api/login')
+                .send(this.__testUser)
+        })
     }
 
     testValidSignup() {
@@ -47,12 +54,11 @@ class UserTester extends BaseTester {
                         })
                         .then((documents) => {
                             documents.length.should.be.eql(1)
+                            done()
                         })
                         .catch((err) => {
                             done(err)
                         })
-
-                    done()
                 })
                 .catch((err) => {
                     done(err)
@@ -89,6 +95,8 @@ class UserTester extends BaseTester {
                 .send(this.__testUser)
                 .then((res) => {
                     res.should.have.status(200)
+                    // TODO: test basket created
+                    
                     done()
 
                     this.testPasswordHashed()
@@ -105,8 +113,7 @@ class UserTester extends BaseTester {
             badUser.email = this.__testUser.email
             badUser.password = 'this is the wrong password'
 
-            this.__agent
-                .post('/api/login')
+            this.__agent.post('/api/login')
                 .send(badUser)
                 .then((res) => {
                     done(new Error('Should not be able to login with wrong password'))
@@ -123,8 +130,7 @@ class UserTester extends BaseTester {
             badUser.email = 'thisEmail@doesnotexist.com'
             badUser.password = 'this is the wrong password'
 
-            this.__agent
-                .post('/api/login')
+            this.__agent.post('/api/login')
                 .send(badUser)
                 .then((res) => {
                     done(new Error('Should not be able to login with non-existent user'))
@@ -153,8 +159,7 @@ class UserTester extends BaseTester {
 
     testValidLogout() {
         it('user should be able to logout', (done) => {
-            this.__agent
-                .post('/api/logout')
+            this.__agent.post('/api/logout')
                 .send()
                 .then((res) => {
                     res.should.have.status(200)
@@ -168,8 +173,7 @@ class UserTester extends BaseTester {
 
     testInvalidLogout() {
         it('user should not be able to logout', (done) => {
-            this.__agent
-                .post('/api/logout')
+            this.__agent.post('/api/logout')
                 .send()
                 .then((res) => {
                     done(new Error('Incorrect status'))
