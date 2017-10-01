@@ -62,3 +62,6 @@ typings/
 
 # Visual studio settings
 .vscode/
+
+# Redis file
+dump.rbd
