@@ -13,8 +13,8 @@ import app from './../app'
 require('./../../config')
 chai.use(chaiHttp)
 
-
-BaseTester.resetCollections()
+// TODO: Needs to run synchronously before other tests
+resetCollections()
 const agent = chai.request.agent(app)
 
 const itemTester = new ItemTester(db.Item)
@@ -24,3 +24,21 @@ const basketTester = new BasketTester(db.Basket, agent)
 itemTester.runAllTests()
 userTester.runAllTests()
 basketTester.runAllTests()
+
+function resetCollections() {
+    describe('Clean', () => {
+        it('should remove all documents from all collections', (done) => {
+            for (let collection in db) {
+                db[collection].find({})
+                    .remove()
+                    .exec()
+                    .then(() => {})
+                    .catch((err) => {
+                        done(err)
+                    })
+            }
+
+            done()
+        })
+    })
+}

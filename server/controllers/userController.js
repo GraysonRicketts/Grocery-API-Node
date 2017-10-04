@@ -5,9 +5,6 @@ import db from './../models'
 
 const userController = {};
 
-// userController.put = (req, res) => {
-//     // TODO: Allow password or email to be reset
-// }
 
 userController.login = (req, res) => {
     res.status(200).json({
@@ -21,10 +18,8 @@ userController.signup = (req, res) => {
         password 
     } = req.body
 
-    
-
     // TODO: Validate input
-    //      TODO: Password must be less than 72 character for encryption
+    // TODO: Password must be less than 72 character for encryption
 
     // Hash password
     bcrypt.genSalt(parseInt(process.env.SALT_ROUNDS)).then((salt) => {
@@ -41,8 +36,7 @@ userController.signup = (req, res) => {
             user._basket = basket._id
 
             // Save user
-            user
-                .save()
+            user.save()
                 .then((newUser) => {
                     // Create new Basket associated with user
                     basket
@@ -86,6 +80,10 @@ userController.logout = (req, res) => {
 
 // userController.delete = (req, res) => {
 //     // TODO: Soft delete user
+// }
+
+// userController.put = (req, res) => {
+//     // TODO: Allow password or email to be reset
 // }
 
 export default userController

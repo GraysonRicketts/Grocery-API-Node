@@ -38,8 +38,7 @@ class UserTester extends BaseTester {
 
     testValidSignup() {
         it('user should successfully signup', (done) => {
-            this.__agent
-                .post('/api/signup')
+            this.__agent.post('/api/signup')
                 .send(this.__testUser)
                 .then((res) => {
                     res.should.have.status(200)

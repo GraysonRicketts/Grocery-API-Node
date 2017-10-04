@@ -10,32 +10,7 @@ class BaseTester {
     constructor(schema, agent) {
         this.__schema = schema
         this.__agent = agent
-        this.__testUser = require('./../../seeds/data/user').testUser        
-    }
-
-    static resetCollections() {
-        describe('Clean', () => {
-            it('should remove all documents from all collections', (done) => {
-                let removalPromises = []
-                
-                for (let collection in db) {
-                    removalPromises.push(
-                        db[collection].remove()
-                            .catch((err) => {
-                                done(err)
-                            })
-                    )
-                }
-                
-                Promise.all(removalPromises)
-                    .then(() => {
-                        done()
-                    })
-                    .catch((err) => {
-                        done(err)
-                    })
-            })
-        })
+        this.__testUser = require('./../../seeds/data/user').testUser
     }
 
     testCollectionSize(numDocuments) {
