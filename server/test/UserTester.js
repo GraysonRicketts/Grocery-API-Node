@@ -7,33 +7,21 @@ const should = chai.should()
 
 class UserTester extends BaseTester {
     runAllTests() {
-        describe('User', () => {
-            this.testCollectionSize(0)
-            
-            describe('Signup', () => {
-                this.testValidSignup()
-                this.testInvalidSignup()
-            })
+        this.testCollectionSize(0)
+        
+        // Signup
+        this.testValidSignup()
+        this.testInvalidSignup()
 
-            describe('Login', () => {
-                this.testValidLogin()
-                this.testWrongPasswordLogin()
-                this.testNonExistentEmailLogin()
-                this.testPasswordHashed()
-            })
+        // Login
+        this.testValidLogin()
+        this.testWrongPasswordLogin()
+        this.testNonExistentEmailLogin()
+        this.testPasswordHashed()
 
-            describe('Logout', () => {
-                this.testValidLogout()
-                this.testInvalidLogout()
-            })
-        })
-
-        // Log agent back in for basket tests
-        after(() => {
-            this.__agent
-                .post('/api/login')
-                .send(this.__testUser)
-        })
+        // Logout
+        this.testValidLogout()
+        this.testInvalidLogout()
     }
 
     testValidSignup() {
@@ -61,8 +49,7 @@ class UserTester extends BaseTester {
 
     testInvalidSignup() {
         it('user should not successfully signup', (done) => {
-            this.__agent
-                .post('/api/signup')
+            this.__agent.post('/api/signup')
                 .send(this.__testUser)
                 .then((res) => {
                     done(new Error('User should not have been able to signup'))
@@ -83,8 +70,7 @@ class UserTester extends BaseTester {
 
     testValidLogin() {
         it('user should login', (done) => {
-            this.__agent
-                .post('/api/login')
+            this.__agent.post('/api/login')
                 .send(this.__testUser)
                 .then((res) => {
                     res.should.have.status(200)

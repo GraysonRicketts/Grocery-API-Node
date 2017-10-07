@@ -10,20 +10,15 @@ class ItemTester extends BaseTester {
     }
 
     runAllTests() {
-        describe('Item', () => {
-            this.testCollectionSize(0)
-
-            describe('Seeding', () => {
-                this.testSeedingDb()
-            })
-        })
+        this.testCollectionSize(0)
+        this.testSeedingDb()
     }
 
     testSeedingDb() {
         it('should seed the database', (done) => {
             seeders.seedItems()
                 .then(() => {
-                    this.__schema.find()
+                    this.__schema.find({}).exec()
                         .then((documents) => {
                             documents.length.should.be.eql(this.__numItems)
                             done()

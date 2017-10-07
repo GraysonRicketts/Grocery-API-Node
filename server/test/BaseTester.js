@@ -14,16 +14,18 @@ class BaseTester {
     }
 
     testCollectionSize(numDocuments) {
-        describe('DB Initialization', () => {
-            it('should be ' + numDocuments + ' documents in the collection at start of testing', (done) => {
-                this.__schema.find()
-                    .then((documents) => {
-                        documents.length.should.be.eql(numDocuments)
-                        done()
-                    })
-                    .catch((err) => {
-                        done(err)
+        const testString = 'should be ' + 
+            numDocuments + 
+            ' documents in the collection at start of testing'
+
+        it(testString, (done) => {
+            this.__schema.find({})
+                .then((documents) => {
+                    documents.length.should.be.eql(numDocuments)
+                    done()
                 })
+                .catch((err) => {
+                    done(err)
             })
         })
     }

@@ -51,19 +51,19 @@ userController.signup = (req, res) => {
                         .catch((err) => {
                             // TODO: Remove user b/c basket creation failed
                             res.status(500).json({
-                                message: err.message
+                                message: err.errmsg
                             })
                         })
                 })
                 .catch((err) => {
                     res.status(500).json({
-                        message: err.message,
+                        message: err.errmsg,
                     })
                 })
             })
             .catch((err) => {
                 res.status(500).json({
-                    message: err.message
+                    message: err.errmsg
                 })
             })
         })

@@ -42,7 +42,7 @@ basketController.post = (req, res) => {
             }
             catch (err) {
                 res.status(500).json({
-                    message: 'Failed to update basket: ' + err.message
+                    message: 'Failed to update basket: ' + err.errmsg
                 })
                 return
             }
@@ -51,7 +51,7 @@ basketController.post = (req, res) => {
             basket.save((err) => {
                 if (err) {
                     res.status(500).json({
-                        message: 'Failed to save updates: ' + err.message
+                        message: 'Failed to save updates: ' + err.errmsg
                     })
 
                     return

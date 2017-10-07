@@ -8,32 +8,19 @@ const should = chai.should()
 
 class BasketTester extends BaseTester {
     async runAllTests() {
-        let res = {}
-        try {
-            res = await this.__agent.post('/api/signup').send(this.__testUser)
-        }
-        catch(err) {
-            console.error(err)
-            return;
-        }
-
-        res.should.have.status(200)
-
-        describe('Basket', () => {
-            this.testCollectionSize(1)
-            this.testGettingNothing()
-            // this.testAddingAnItem()
-        })
+        this.testCollectionSize(1)
+        this.testGettingNothing()
+        // this.testAddingAnItem()
     }
 
     testGettingNothing() {
         it ('should get no items', (done) => {
-            this.__agent.get('/api/basket')
+            this.login().then(() => {
+                this.__agent.get('/api/basket')
                 .send()
                 .then((res) => {
                     if (res.body.success === false) {
                         done('Failed to get basket')
-                        return
                     }
 
                     res.body.basket._items.length.should.be.eql(0)
@@ -42,6 +29,10 @@ class BasketTester extends BaseTester {
                 .catch((err) => {
                     done(err)
                 })
+            })
+            .catch((err) => {
+                done(err)
+            })
         })
     }
 
@@ -63,6 +54,10 @@ class BasketTester extends BaseTester {
                     done(err)
                 })
         })
+    }
+
+    login() {
+        return this.__agent.post('/api/login').send(this.__testUser)
     }
 }
 
