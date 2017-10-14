@@ -30,7 +30,7 @@ userController.signup = (req, res) => {
             })
 
             const basket = new db.Basket({
-                _user: user._id
+                user: user._id
             })
 
             user._basket = basket._id

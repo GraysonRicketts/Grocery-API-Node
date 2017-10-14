@@ -3,18 +3,17 @@ import db from './../models/'
 
 const basketController = {}
 
-basketController.get = (req, res) => {
-    // TODO: Authenticate b/c user can change cookie (_basket)
+basketController.get = function getBasket(req, res) {
     db.Basket.findById(req.user.basketId)
         .populate({
-            path: '_items._item',
+            path: 'items.itemDef',
             model: 'Item',
-            select: 'title category brand description'
+            select: 'title category brand'
         })
         .then((basket) => {
             if (basket) {
                 res.status(200).json({
-                    basket: basket
+                    basket
                 })
             }
             else {
@@ -31,70 +30,92 @@ basketController.get = (req, res) => {
         })
 }
 
-basketController.post = (req, res) => {
-    // TODO: Validate newItems
-    const newItems = req.body
+// Req must have b
+basketController.post = function postBasket(req, res) {
+    if (!req.delta) {
+        res.status(400).json({
+            success: false
+        })
 
-    db.Basket.findById(req.user._basket)
-        .then((basket) => {
-            try {
-                const badUpdates = updateBasket(basket, newItems)
-            }
-            catch (err) {
-                res.status(500).json({
-                    message: 'Failed to update basket: ' + err.errmsg
-                })
-                return
-            }
+        return
+    }
 
-            basket.markModified('_items')
-            basket.save((err) => {
-                if (err) {
-                    res.status(500).json({
-                        message: 'Failed to save updates: ' + err.errmsg
-                    })
+    const basketId = req.user.basketId
 
-                    return
-                }
-            })
+    let promises = []
+    promises.concat(addNewItemsToBasket(req.delta.newItems, basketId, promises))
+    // removeItemsFromBasket(req.delta.removeItems, basketId)
+    // modifyItemsInBasket(req.delta.modItems, basketId)
 
+    Promise.all(promises)
+        .then(() => {
             res.status(200).json({
-                basket: basket
+                success: true
             })
-        }).catch((err) => {
-            res.status(500).json({
-                err
+        })
+        .catch((err) => {
+            res.status(400).json({
+                success: false
             })
         })
 }
 
-// TODO: Add route to remove items from basket
-
-function updateBasket(basket, newItems) {
-    basket._items.forEach((item, index) => {
-        const itemId = item._item.toString()
-        
-        // Update existing items
-        if (itemId in newItems) { 
-            for (let field in newItems[itemId]) {
-                basket._items[index][field] = newItems[itemId][field]
-            }
-
-            delete newItems[itemId]
-        }
-    }, this)
-
-    // Add new items
-    for (let itemId in newItems) {
-        let tempItem = {}
-
-        tempItem._item = itemId
-        for (let field in newItems[itemId]) {
-            tempItem[field] = newItems[itemId][field]
-        }
-
-        basket._items.push(new db.BasketItem(tempItem))
+function addNewItemsToBasket(newBasketItems, basketId) {
+    if (!newBasketItems) {
+        return
     }
+
+    let addPromises = []
+
+    // Iterate over items
+    newBasketItems.forEach(function(basketItem) {
+        const itemDef = findItemDefinition(basketItem.item)
+
+        const newItem = new db.BasketItem({
+            item: itemDef,
+            quantity: basketItem.quantity,
+            size: basketItem.size
+        })
+
+        // Add item to basket
+        let promise = db.Basket.findByIdAndUpdate(
+                basketId,
+                { $push: { 'items': newItem }},
+                { safe: true, upsert: true }
+            ).exec()
+        
+        addPromises.push(promise)
+    })
+
+    return addPromises
+}
+
+async function findItemDefinition(item, basketId) {
+    const dbItemDef = await db.Item.find(item).exec()
+
+    if (!itemDef) {
+        for (field in item) {
+            item[field] = String.prototype.toLocaleLowerCase(item[field])
+        }
+
+        return item
+    }
+
+    return dbItemDef
+}
+
+function removeItemsFromBasket(removeItems, basketId) {
+    if (!removeItems) {
+        return
+    }
+
+}
+
+function modifyItemsInBasket(modItems, basketId) {
+    if (!modItems) {
+        return
+    }
+
 }
 
 export default basketController

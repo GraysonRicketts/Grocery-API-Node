@@ -10,7 +10,7 @@ class BasketTester extends BaseTester {
     async runAllTests() {
         this.testCollectionSize(1)
         this.testGettingNothing()
-        // this.testAddingAnItem()
+        this.testAddingAnItem()
     }
 
     testGettingNothing() {
@@ -23,7 +23,7 @@ class BasketTester extends BaseTester {
                         done('Failed to get basket')
                     }
 
-                    res.body.basket._items.length.should.be.eql(0)
+                    res.body.basket.items.length.should.be.eql(0)
                     done()
                 })
                 .catch((err) => {
@@ -38,17 +38,20 @@ class BasketTester extends BaseTester {
 
     testAddingAnItem() {
         it('should add an item', (done) => {
-            db.Item.find({ title: 'Salmon' }).exec()
-                .then((item) => {
-                    this.__agent.post('/api/basket')
-                        .send(item)
-                        .then((res) => {
-                            res.basket.length.should.be.eql(1)
-                            done()
-                        })
-                        .catch((err) => {
-                            done(err)
-                        })
+            let request = {
+                delta: {}
+            }
+            request.delta.newItems = []
+
+            request.delta.newItems.push({
+                title: 'salmon'
+            })
+
+            this.__agent.post('/api/basket')
+                .send(request)
+                .then((res) => {
+                    res.basket.length.should.be.eql(1)
+                    done()
                 })
                 .catch((err) => {
                     done(err)

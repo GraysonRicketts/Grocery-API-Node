@@ -1,0 +1,40 @@
+*Grayson Ricketts 7-10-2017
+
+What functionality do I want from the basket?
+* Have items with
+    * NAME
+    * size / quantity
+    * brand
+    * number
+    * department / category
+
+* when mutliple of the same item are added
+I want multiple of the items to be added
+together if possible
+    * if all properties but the 
+    number are the same
+
+Possible solutions:
+1. Have all items have an ID or instance
+in the database
+2. Use all properties but the number to 
+stack items
+
+Pro | Con
+1. Fast, easy to implement | all items must
+have id or exist in DB, what to do with custom
+items?
+2. Conceptually simple mapping from
+item to DB object, all items in one place
+| Slow, hard to index / search, more code?
+
+Just don't think 1 is possible. Seems impossible to ask client to know DB id of item or have one created.
+
+
+-------
+How do I think about items in a basket
+basket = [basketItems = [Item]]
+* Item is an individual descriptor of an item
+    * idea have items have a created by so DB /
+    my items are included with others but
+    noted

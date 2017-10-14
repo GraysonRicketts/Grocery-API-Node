@@ -2,46 +2,39 @@
     "numItems" : 7,
     "data": [
         { 
-            "title": "Apple",
-            "category": "Produce",
-            "brand": "Test", 
-            "description": "This is a test"
+            "title": "apple",
+            "category": "produce",
+            "brand": "test"
         },
         { 
-            "title": "2% Milk",
-            "category": "Dairy",
-            "brand": "Test", 
-            "description": "This is a test"
+            "title": "2% milk",
+            "category": "dairy",
+            "brand": "test"
         },
         { 
-            "title": "Porterhouse Steak",
-            "category": "Meat",
-            "brand": "Test", 
-            "description": "This is a test"
+            "title": "porterhouse steak",
+            "category": "meat",
+            "brand": "test"
         },
         { 
-            "title": "Salmon",
-            "category": "Seafood",
-            "brand": "Test", 
-            "description": "This is a test"
+            "title": "salmon",
+            "category": "seafood",
+            "brand": "test"
         },
         { 
-            "title": "Peas",
-            "category": "Frozen",
-            "brand": "Test", 
-            "description": "This is a test"
+            "title": "peas",
+            "category": "frozen",
+            "brand": "test"
         },
         { 
-            "title": "Absolut Vodka",
-            "category": "Beer/Wine/Liquor",
-            "brand": "Test", 
-            "description": "This is a test"
+            "title": "absolut vodka",
+            "category": "beer/wine/liquor",
+            "brand": "test"
         },
         { 
-            "title": "Pasta",
-            "category": "Dry Goods/Pantry",
-            "brand": "Test", 
-            "description": "This is a test"
+            "title": "pasta",
+            "category": "dry goods/pantry",
+            "brand": "test"
         }
     ]
 }

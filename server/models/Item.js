@@ -5,13 +5,13 @@ import mongoose from 'mongoose'
 const { Schema } = mongoose
 
 const Categories = [
-    'Dairy',
-    'Produce',
-    'Meat',
-    'Seafood',
-    'Frozen',
-    'Beer/Wine/Liquor',
-    'Dry Goods/Pantry'
+    'dairy',
+    'produce',
+    'meat',
+    'seafood',
+    'frozen',
+    'beer/wine/liquor',
+    'dry goods/pantry'
 ]
 
 // TODO: Possibly add sizes category / validation?
@@ -25,12 +25,11 @@ const itemSchema = new Schema({
         enum : Categories 
     },
     brand: {
-        type: String
+        type: String // TODO: Possible change to object for faster lookup
     },
-    description: { type: String },
     
     isDeleted: { type: Boolean, default: false },
-    createdAt: { type: Date, default: Date.now },
+    createdAt: { type: Date, default: Date.now }
 })
 
 const Item = mongoose.model('Item', itemSchema)
