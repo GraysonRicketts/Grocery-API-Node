@@ -30,9 +30,10 @@ basketController.get = function getBasket(req, res) {
         })
 }
 
-// Req must have b
 basketController.post = function postBasket(req, res) {
-    if (!req.delta) {
+    const delta = req.body.delta
+
+    if (!delta || !delta.newItems) {
         res.status(400).json({
             success: false
         })
@@ -40,15 +41,9 @@ basketController.post = function postBasket(req, res) {
         return
     }
 
-    const basketId = req.user.basketId
-
-    let promises = []
-    promises.concat(addNewItemsToBasket(req.delta.newItems, basketId, promises))
-    // removeItemsFromBasket(req.delta.removeItems, basketId)
-    // modifyItemsInBasket(req.delta.modItems, basketId)
-
-    Promise.all(promises)
-        .then(() => {
+    let addPromises = addNewItemsToBasket(delta.newItems, req.user.basketId, promises)
+        
+    Promise.all(addPromises).then(() => {
             res.status(200).json({
                 success: true
             })
@@ -61,15 +56,17 @@ basketController.post = function postBasket(req, res) {
 }
 
 function addNewItemsToBasket(newBasketItems, basketId) {
-    if (!newBasketItems) {
-        return
-    }
-
     let addPromises = []
 
     // Iterate over items
-    newBasketItems.forEach(function(basketItem) {
-        const itemDef = findItemDefinition(basketItem.item)
+    newBasketItems.forEach((basketItem) => {
+        try {
+            const itemDef = findItemDefinition(basketItem.itemDef)
+        }
+        catch(err) {
+            // TODO: when finding item definition fails let user know / fail more gracefully
+            return
+        }
 
         const newItem = new db.BasketItem({
             item: itemDef,
@@ -77,10 +74,10 @@ function addNewItemsToBasket(newBasketItems, basketId) {
             size: basketItem.size
         })
 
-        // Add item to basket
+        // Push item to basket
         let promise = db.Basket.findByIdAndUpdate(
                 basketId,
-                { $push: { 'items': newItem }},
+                { $push: { 'items': newItem } },
                 { safe: true, upsert: true }
             ).exec()
         
@@ -90,32 +87,30 @@ function addNewItemsToBasket(newBasketItems, basketId) {
     return addPromises
 }
 
-async function findItemDefinition(item, basketId) {
-    const dbItemDef = await db.Item.find(item).exec()
+async function findItemDefinition(item) {
+    let dbItem = await db.Item.find(item).exec()
 
-    if (!itemDef) {
+    if (!dbItem) {
         for (field in item) {
-            item[field] = String.prototype.toLocaleLowerCase(item[field])
+            dbItem[field] = String.prototype.toLocaleLowerCase(item[field])
         }
-
-        return item
     }
 
-    return dbItemDef
+    return dbItem
 }
 
-function removeItemsFromBasket(removeItems, basketId) {
-    if (!removeItems) {
-        return
-    }
+// function removeItemsFromBasket(removeItems, basketId) {
+//     if (!removeItems) {
+//         return
+//     }
 
-}
+// }
 
-function modifyItemsInBasket(modItems, basketId) {
-    if (!modItems) {
-        return
-    }
+// function modifyItemsInBasket(modItems, basketId) {
+//     if (!modItems) {
+//         return
+//     }
 
-}
+// }
 
 export default basketController
