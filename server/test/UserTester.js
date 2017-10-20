@@ -1,31 +1,41 @@
 import chai from 'chai'
 
+import User from './../models/User'
 import BaseTester from './BaseTester'
+import BasketTester from './BasketTester'
 
 const should = chai.should()
 
 
 class UserTester extends BaseTester {
+    constructor(agent) {
+        super(User, agent)
+    }
+
     runAllTests() {
-        this.testCollectionSize(0)
+        const basketTester = new BasketTester(this.__agent)
         
-        // Signup
-        this.testValidSignup()
-        this.testInvalidSignup()
+        describe('User', () => {
+            // Signup
+            this.testValidSignup()
+            this.testInvalidSignup()
+    
+            // Login
+            this.testValidLogin()
+            this.testWrongPasswordLogin()
+            this.testNonExistentEmailLogin()
+            this.testPasswordHashed()
+    
+            // Logout
+            this.testValidLogout()
+            this.testInvalidLogout()
 
-        // Login
-        this.testValidLogin()
-        this.testWrongPasswordLogin()
-        this.testNonExistentEmailLogin()
-        this.testPasswordHashed()
-
-        // Logout
-        this.testValidLogout()
-        this.testInvalidLogout()
+            basketTester.runAllTests()
+        })
     }
 
     testValidSignup() {
-        it('user should successfully signup', (done) => {
+        it('should successfully signup', (done) => {
             this.__agent.post('/api/signup')
                 .send(this.__testUser)
                 .then((res) => {
@@ -48,7 +58,7 @@ class UserTester extends BaseTester {
     }
 
     testInvalidSignup() {
-        it('user should not successfully signup', (done) => {
+        it('should not successfully signup', (done) => {
             this.__agent.post('/api/signup')
                 .send(this.__testUser)
                 .then((res) => {
@@ -69,7 +79,7 @@ class UserTester extends BaseTester {
     }
 
     testValidLogin() {
-        it('user should login', (done) => {
+        it('should login', (done) => {
             this.__agent.post('/api/login')
                 .send(this.__testUser)
                 .then((res) => {
@@ -87,7 +97,7 @@ class UserTester extends BaseTester {
     }
 
     testWrongPasswordLogin() {
-        it('user should not be able to login with wrong password', (done) => {
+        it('should not be able to login with wrong password', (done) => {
             let badUser = {}
             badUser.email = this.__testUser.email
             badUser.password = 'this is the wrong password'
@@ -104,7 +114,7 @@ class UserTester extends BaseTester {
     }
 
     testNonExistentEmailLogin() {
-        it('user should not be able to login with non-existent user', (done) => {
+        it('should not be able to login with non-existent user', (done) => {
             let badUser = {}
             badUser.email = 'thisEmail@doesnotexist.com'
             badUser.password = 'this is the wrong password'
@@ -121,7 +131,7 @@ class UserTester extends BaseTester {
     }
 
     testPasswordHashed() {
-        it('user password should be hashed', (done) => {
+        it('password should be hashed', (done) => {
             this.__schema.find({ email: this.__testUser.email})
                 .then((user) => {
                     if (user.password !== this.__testUser.password) {
@@ -137,7 +147,7 @@ class UserTester extends BaseTester {
     }
 
     testValidLogout() {
-        it('user should be able to logout', (done) => {
+        it('should be able to logout', (done) => {
             this.__agent.post('/api/logout')
                 .send()
                 .then((res) => {
@@ -151,7 +161,7 @@ class UserTester extends BaseTester {
     }
 
     testInvalidLogout() {
-        it('user should not be able to logout', (done) => {
+        it('should not be able to logout', (done) => {
             this.__agent.post('/api/logout')
                 .send()
                 .then((res) => {

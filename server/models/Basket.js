@@ -1,6 +1,5 @@
 import mongoose from 'mongoose'
 
-import Item from './Item'
 import BasketItem from './BasketItem'
 
 

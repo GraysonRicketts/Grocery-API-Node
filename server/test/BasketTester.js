@@ -1,35 +1,46 @@
 import chai from 'chai'
 
 import db from './../models'
+import Basket from './../models/Basket'
 import BaseTester from './BaseTester'
 
 const should = chai.should()
 
 
 class BasketTester extends BaseTester {
+    constructor(agent) {
+        super(Basket, agent)
+    }
+
     runAllTests() {
-        this.testCollectionSize(1)
-        this.testGettingNothing()
-        this.testAddingAnItem()
-        // this.testGettingOneItem()
+        describe('Basket', () => {
+            before((done) => {
+                this.__agent.post('/api/login').send(this.__testUser)
+                    .then(() => {
+                        done()
+                    })
+                    .catch((err) => {
+                        done(err)
+                    })
+            })
+
+            this.testGettingNothing()
+            this.testAddingAnItem()
+            this.testGettingOneItem()
+        })  
     }
 
     testGettingNothing() {
         it ('should get no items', (done) => {
-            this.login().then(() => {
-                this.__agent.get('/api/basket')
-                .send()
-                .then((res) => {
-                    if (res.body.success === false) {
-                        done('Failed to get basket')
-                    }
+            this.__agent.get('/api/basket')
+            .send()
+            .then((res) => {
+                if (res.body.success === false) {
+                    done('Failed to get basket')
+                }
 
-                    res.body.basket.items.length.should.be.eql(0)
-                    done()
-                })
-                .catch((err) => {
-                    done(err)
-                })
+                res.body.basket.items.length.should.be.eql(0)
+                done()
             })
             .catch((err) => {
                 done(err)
@@ -66,15 +77,16 @@ class BasketTester extends BaseTester {
 
     testGettingOneItem() {
         it ('should get 1 items', (done) => {
-            this.login().then(() => {
-                this.__agent.get('/api/basket')
+            this.__agent.get('/api/basket')
                 .send()
                 .then((res) => {
                     if (res.body.success === false) {
                         done('Failed to get basket')
                     }
 
-                    res.body.basket.items.length.should.be.eql(1)
+                    const items = res.body.basket.items
+
+                    items.length.should.be.eql(1)
                     // res.body.basket.items[0].itemDef.
                     done()
                 })
@@ -82,14 +94,6 @@ class BasketTester extends BaseTester {
                     done(err)
                 })
             })
-            .catch((err) => {
-                done(err)
-            })
-        })
-    }
-
-    login() {
-        return this.__agent.post('/api/login').send(this.__testUser)
     }
 }
 

@@ -1,21 +1,23 @@
 import BaseTester from './BaseTester'
+import Item from './../models/Item'
 import seeders from './../../seeds'
 
 
 class ItemTester extends BaseTester {
-    constructor(schema, app) {
-        super(schema, app)
+    constructor() {
+        super(Item, null)
 
         this.__numItems = require('./../../seeds/data/items').numItems
     }
 
     runAllTests() {
-        this.testCollectionSize(0)
-        this.testSeedingDb()
+        describe('Items', () => {
+            this.testSeedingDb()
+        })
     }
 
     testSeedingDb() {
-        it('should seed the database', (done) => {
+        it('should be seeded to the database', (done) => {
             seeders.seedItems()
                 .then(() => {
                     this.__schema.find({}).exec()

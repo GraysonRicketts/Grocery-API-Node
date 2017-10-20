@@ -41,7 +41,7 @@ basketController.post = function postBasket(req, res) {
         return
     }
 
-    let addPromises = addNewItemsToBasket(delta.newItems, req.user.basketId, promises)
+    let addPromises = addNewItemsToBasket(delta.newItems, req.user.basketId)
         
     Promise.all(addPromises).then(() => {
             res.status(200).json({
@@ -60,16 +60,10 @@ function addNewItemsToBasket(newBasketItems, basketId) {
 
     // Iterate over items
     newBasketItems.forEach((basketItem) => {
-        try {
-            const itemDef = findItemDefinition(basketItem.itemDef)
-        }
-        catch(err) {
-            // TODO: when finding item definition fails let user know / fail more gracefully
-            return
-        }
+        const itemDef = findItemDefinition(basketItem.itemDef)
 
         const newItem = new db.BasketItem({
-            item: itemDef,
+            itemDef,
             quantity: basketItem.quantity,
             size: basketItem.size
         })
@@ -88,7 +82,7 @@ function addNewItemsToBasket(newBasketItems, basketId) {
 }
 
 async function findItemDefinition(item) {
-    let dbItem = await db.Item.find(item).exec()
+    let dbItem = await db.Item.findOne(item).exec()
 
     if (!dbItem) {
         for (field in item) {

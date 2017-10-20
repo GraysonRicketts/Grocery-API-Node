@@ -7,7 +7,6 @@ import seeds from './../../seeds'
 import BaseTester from './BaseTester'
 import ItemTester from './ItemTester'
 import UserTester from './UserTester'
-import BasketTester from './BasketTester'
 
 // Pre-app initializations
 require('./../../config')
@@ -15,42 +14,59 @@ chai.use(chaiHttp)
 
 
 const agent = chai.request.agent(app)
-const models = [
+const collections = [
     db.Basket,
     db.User,
     db.Item
 ]
 
-const itemTester = new ItemTester(db.Item)
-const userTester = new UserTester(db.User, agent)
-const basketTester = new BasketTester(db.Basket, agent)
+const itemTester = new ItemTester()
+const userTester = new UserTester(agent)
 
-describe('Synchronous API Tests', () => {
-    testResetingCollections()
+// Start point for all tests
+describe('API', () => {
+    before(testResetingCollections)
+
     itemTester.runAllTests()
     userTester.runAllTests()
-    basketTester.runAllTests()
 })
 
-function testResetingCollections() {
-    it('collections should be empty', (done) => {
-        resetCollections().then(() => {
-            done()
+
+// Test helper functions
+
+function testResetingCollections(done) {
+    resetCollections().then(() => {
+        collections.forEach((collection) => {
+            if (!isCollectionEmpty(collection)) {
+                throw new Error('Failed to reset ' + collection.modelName)
+            }
         })
-        .catch((err) => {
-            done(err)
-        })
+
+        done()
+    })
+    .catch((err) => {
+        done(err)
     })
 }
 
 function resetCollections() {
     let removalPromises = []
     
-    models.forEach((model) => {
-        let promise = model.remove({}).exec()
+    collections.forEach((collection) => {
+        let promise = collection.remove({}).exec()
         
         removalPromises.push(promise)
     })
 
     return Promise.all(removalPromises)
+}
+
+async function isCollectionEmpty(collection) {
+    const documents = await collection.find({}).exec()
+
+    if (documents) {
+        return false
+    }
+
+    return true
 }
