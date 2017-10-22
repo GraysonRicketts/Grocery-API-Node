@@ -39,7 +39,9 @@ class BasketTester extends BaseTester {
                     done('Failed to get basket')
                 }
 
+                // Checks
                 res.body.basket.items.length.should.be.eql(0)
+
                 done()
             })
             .catch((err) => {
@@ -66,7 +68,9 @@ class BasketTester extends BaseTester {
             this.__agent.post('/api/basket')
                 .send(items)
                 .then((res) => {
-                    res.status.should.be.eql(200)
+                    // Checks
+                    res.status.should.be.eql(201)
+
                     done()
                 })
                 .catch((err) => {
@@ -76,7 +80,7 @@ class BasketTester extends BaseTester {
     }
 
     testGettingOneItem() {
-        it ('should get 1 items', (done) => {
+        it ('should get 1 item', (done) => {
             this.__agent.get('/api/basket')
                 .send()
                 .then((res) => {
@@ -86,8 +90,11 @@ class BasketTester extends BaseTester {
 
                     const items = res.body.basket.items
 
+                    // Checks
                     items.length.should.be.eql(1)
-                    // res.body.basket.items[0].itemDef.
+                    items[0].quantity.should.be.eql(2)
+                    items[0].title.should.be.eql('salmon')
+
                     done()
                 })
                 .catch((err) => {

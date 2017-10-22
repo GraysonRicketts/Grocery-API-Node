@@ -4,7 +4,7 @@ import db from './../models/'
 const basketController = {}
 
 basketController.get = function getBasket(req, res) {
-    db.Basket.findById(req.user.basketId)
+    db.Basket.findById(req.user.basketId).exec()
         .populate({
             path: 'items.itemDef',
             model: 'Item',
@@ -17,15 +17,15 @@ basketController.get = function getBasket(req, res) {
                 })
             }
             else {
-                res.status(400).json({
+                res.status(500).json({
                     success: false
                 })
             }
-            
+
         })
         .catch((err) => {
             res.status(500).json({
-                message: err
+                success: false
             })
         })
 }
@@ -42,14 +42,14 @@ basketController.post = function postBasket(req, res) {
     }
 
     let addPromises = addNewItemsToBasket(delta.newItems, req.user.basketId)
-        
+
     Promise.all(addPromises).then(() => {
-            res.status(200).json({
+            res.status(201).json({
                 success: true
             })
         })
         .catch((err) => {
-            res.status(400).json({
+            res.status(500).json({
                 success: false
             })
         })
@@ -59,11 +59,23 @@ function addNewItemsToBasket(newBasketItems, basketId) {
     let addPromises = []
 
     // Iterate over items
-    newBasketItems.forEach((basketItem) => {
-        const itemDef = findItemDefinition(basketItem.itemDef)
+    newBasketItems.forEach(async (basketItem) => {
+        let itemDef = null
+
+        try {
+            itemDef = await findItemDefinition(basketItem.itemDef)
+        }
+        catch (err) {
+            console.error(err)
+            return
+        }
+
+        if (!itemDef) {
+            return
+        }
 
         const newItem = new db.BasketItem({
-            itemDef,
+            itemDef: itemDef,
             quantity: basketItem.quantity,
             size: basketItem.size
         })
@@ -74,7 +86,7 @@ function addNewItemsToBasket(newBasketItems, basketId) {
                 { $push: { 'items': newItem } },
                 { safe: true, upsert: true }
             ).exec()
-        
+
         addPromises.push(promise)
     })
 
@@ -82,12 +94,10 @@ function addNewItemsToBasket(newBasketItems, basketId) {
 }
 
 async function findItemDefinition(item) {
-    let dbItem = await db.Item.findOne(item).exec()
+    const dbItem = await db.Item.findOne(item).exec()
 
     if (!dbItem) {
-        for (field in item) {
-            dbItem[field] = String.prototype.toLocaleLowerCase(item[field])
-        }
+        return item
     }
 
     return dbItem
