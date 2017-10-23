@@ -4,7 +4,7 @@ import db from './../models/'
 const basketController = {}
 
 basketController.get = function getBasket(req, res) {
-    db.Basket.findById(req.user.basketId).exec()
+    db.Basket.findById(req.user.basketId)
         .populate({
             path: 'items.itemDef',
             model: 'Item',
@@ -59,16 +59,8 @@ function addNewItemsToBasket(newBasketItems, basketId) {
     let addPromises = []
 
     // Iterate over items
-    newBasketItems.forEach(async (basketItem) => {
-        let itemDef = null
-
-        try {
-            itemDef = await findItemDefinition(basketItem.itemDef)
-        }
-        catch (err) {
-            console.error(err)
-            return
-        }
+    newBasketItems.forEach((basketItem) => {
+        let itemDef = findItemDefinition(basketItem.itemDef)
 
         if (!itemDef) {
             return
@@ -94,7 +86,7 @@ function addNewItemsToBasket(newBasketItems, basketId) {
 }
 
 async function findItemDefinition(item) {
-    const dbItem = await db.Item.findOne(item).exec()
+    const dbItem = await db.Item.findOne(item)
 
     if (!dbItem) {
         return item

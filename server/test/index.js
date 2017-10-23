@@ -23,7 +23,9 @@ const collections = [
 const itemTester = new ItemTester()
 const userTester = new UserTester(agent)
 
-// Start point for all tests
+/*
+ * Start point for all tests
+ */
 describe('API', () => {
     before(testResetingCollections)
 
@@ -32,8 +34,9 @@ describe('API', () => {
 })
 
 
-// Test helper functions
-
+/*
+ * Reset Tests
+ */
 function testResetingCollections(done) {
     resetCollections().then(() => {
         collections.forEach((collection) => {

@@ -33,20 +33,20 @@ class BasketTester extends BaseTester {
     testGettingNothing() {
         it ('should get no items', (done) => {
             this.__agent.get('/api/basket')
-            .send()
-            .then((res) => {
-                if (res.body.success === false) {
-                    done('Failed to get basket')
-                }
+                .send()
+                .then((res) => {
+                    if (res.body.success === false) {
+                        done('Failed to get basket')
+                    }
 
-                // Checks
-                res.body.basket.items.length.should.be.eql(0)
+                    // Checks
+                    res.body.basket.items.length.should.be.eql(0)
 
-                done()
-            })
-            .catch((err) => {
-                done(err)
-            })
+                    done()
+                })
+                .catch((err) => {
+                    done(err)
+                })
         })
     }
 

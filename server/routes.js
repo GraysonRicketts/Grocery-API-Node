@@ -18,10 +18,6 @@ routes.post('/logout', authenticationMiddleware(true), userController.logout)
 routes.get('/basket', authenticationMiddleware(true), basketController.get)
 routes.post('/basket', authenticationMiddleware(true), basketController.post)
 
-// TODO: Remove? Items maybe static.
-// Item Routes
-// routes.post('/item/:itemId', itemController.post)
-
 function authenticationMiddleware(shouldAlreadyBeAuthenticated) {
     return function(req, res, next) {
         if (req.isAuthenticated()) {
@@ -34,7 +30,7 @@ function authenticationMiddleware(shouldAlreadyBeAuthenticated) {
             }
         } else {
             if (!shouldAlreadyBeAuthenticated) {
-                next()   
+                next()
             }
             res.status(401).json({
                 success: false
