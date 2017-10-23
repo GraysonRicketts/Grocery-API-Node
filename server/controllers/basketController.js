@@ -60,39 +60,33 @@ function addNewItemsToBasket(newBasketItems, basketId) {
 
     // Iterate over items
     newBasketItems.forEach((basketItem) => {
-        let itemDef = findItemDefinition(basketItem.itemDef)
+        db.Item.findOne(basketItem.itemDef).then((itemDef) => {
+            if (!itemDef) {
+                return
+            }
 
-        if (!itemDef) {
-            return
-        }
+            const newItem = new db.BasketItem({
+                itemDef: itemDef,
+                quantity: basketItem.quantity,
+                size: basketItem.size
+            })
 
-        const newItem = new db.BasketItem({
-            itemDef: itemDef,
-            quantity: basketItem.quantity,
-            size: basketItem.size
+            // Push item to basket
+            let promise = db.Basket.findByIdAndUpdate(
+                    basketId,
+                    { $push: { 'items': newItem } },
+                    { safe: true, upsert: true }
+                ).exec()
+
+            addPromises.push(promise)
         })
-
-        // Push item to basket
-        let promise = db.Basket.findByIdAndUpdate(
-                basketId,
-                { $push: { 'items': newItem } },
-                { safe: true, upsert: true }
-            ).exec()
-
-        addPromises.push(promise)
     })
 
     return addPromises
 }
 
 async function findItemDefinition(item) {
-    const dbItem = await db.Item.findOne(item)
-
-    if (!dbItem) {
-        return item
-    }
-
-    return dbItem
+    return await db.Item.findOne(item)
 }
 
 // function removeItemsFromBasket(removeItems, basketId) {

@@ -93,7 +93,7 @@ class BasketTester extends BaseTester {
                     // Checks
                     items.length.should.be.eql(1)
                     items[0].quantity.should.be.eql(2)
-                    items[0].title.should.be.eql('salmon')
+                    items[0].itemDef.title.should.be.eql('salmon')
 
                     done()
                 })
