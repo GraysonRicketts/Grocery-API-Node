@@ -17,6 +17,8 @@ routes.post('/logout', authenticationMiddleware(true), userController.logout)
 // Bakset Routes
 routes.get('/basket', authenticationMiddleware(true), basketController.get)
 routes.post('/basket', authenticationMiddleware(true), basketController.post)
+routes.put('/basket', authenticationMiddleware(true), basketController.put)
+routes.delete('/basket', authenticationMiddleware(true), basketController.delete)
 
 function authenticationMiddleware(shouldAlreadyBeAuthenticated) {
     return function(req, res, next) {

@@ -55,6 +55,43 @@ basketController.post = function postBasket(req, res) {
         })
 }
 
+basketController.put = function putInBasket(req, res) {
+    const delta = req.body.delta
+
+    if (!delta || !delta.modItems) {
+        res.status(400).json({
+            success: false
+        })
+
+        return
+    }
+
+    let modifyPromises = modifyItemsInBasket(delta.modItems, req.user.basketId)
+
+    Promise.all(modifyPromises).then(() => {
+            res.status(201).json({
+                success: true
+            })
+        })
+        .catch((err) => {
+            res.status(500).json({
+                success: false
+            })
+        })
+}
+
+basketController.delete = function deleteFromBasket(req, res) {
+    const delta = req.body.delta
+
+    if (!delta || !delta.deletedItems) {
+        res.status(400).json({
+            success: false
+        })
+
+        return
+    }
+}
+
 function addNewItemsToBasket(newBasketItems, basketId) {
     let addPromises = []
 
@@ -85,22 +122,17 @@ function addNewItemsToBasket(newBasketItems, basketId) {
     return addPromises
 }
 
-async function findItemDefinition(item) {
-    return await db.Item.findOne(item)
+function modifyItemsInBasket(modItems, basketId) {
+    let modifyPromises = []
+    
+        // Iterate over items
+        modItems.forEach((basketItem) => {
+            // Find item in basket
+
+            // Make modifications to quantity or size
+        })
+    
+    return modifyPromises
 }
-
-// function removeItemsFromBasket(removeItems, basketId) {
-//     if (!removeItems) {
-//         return
-//     }
-
-// }
-
-// function modifyItemsInBasket(modItems, basketId) {
-//     if (!modItems) {
-//         return
-//     }
-
-// }
 
 export default basketController

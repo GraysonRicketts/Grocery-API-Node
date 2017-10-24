@@ -27,6 +27,7 @@ class BasketTester extends BaseTester {
             this.testGettingNothing()
             this.testAddingAnItem()
             this.testGettingOneItem()
+            // TODO: test adding multiple items
         })  
     }
 
