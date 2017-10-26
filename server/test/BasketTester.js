@@ -28,6 +28,7 @@ class BasketTester extends BaseTester {
             this.testAddingAnItem()
             this.testGettingOneItem()
             // TODO: test adding multiple items
+            this.testUpdatingOneItem()
         })  
     }
 
@@ -71,6 +72,7 @@ class BasketTester extends BaseTester {
                 .then((res) => {
                     // Checks
                     res.status.should.be.eql(201)
+                    // TODO: Check that it is actually added
 
                     done()
                 })
@@ -97,6 +99,47 @@ class BasketTester extends BaseTester {
                     items[0].itemDef.title.should.be.eql('salmon')
 
                     done()
+                })
+                .catch((err) => {
+                    done(err)
+                })
+            })
+    }
+
+    testUpdatingOneItem() {
+        it ('should update 1 item', (done) => {
+            this.__agent.get('/api/basket')
+                .send()
+                .then((res) => {
+                    if (res.body.success === false) {
+                        done('Failed to get basket')
+                    }
+
+                    // Modify item
+                    let modifiedItem = res.body.basket.items[0]
+                    modifiedItem.quantity = 300
+
+                    // Create delta
+                    let items = {
+                        delta: {}
+                    }
+                    items.delta.modItems = [ modifiedItem ]
+
+                    this.__agent.put('/api/basket')
+                        .send(items)
+                        .then((res2) => {
+                            if (res2.body.success === false) {
+                                done('Failed to update basket')
+                            }
+
+                            res2.body.success.should.be.eql(true)
+                            res2.body.mods[0].ok.should.be.eql(1)
+
+                            done()
+                        })
+                        .catch((err) => {
+                            done(err)
+                        })
                 })
                 .catch((err) => {
                     done(err)

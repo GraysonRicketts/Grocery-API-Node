@@ -1,3 +1,5 @@
+import mongoose from 'mongoose'
+
 import db from './../models/'
 
 
@@ -43,9 +45,10 @@ basketController.post = function postBasket(req, res) {
 
     let addPromises = addNewItemsToBasket(delta.newItems, req.user.basketId)
 
-    Promise.all(addPromises).then(() => {
+    Promise.all(addPromises).then((newItems) => {
             res.status(201).json({
-                success: true
+                success: true,
+                newItems
             })
         })
         .catch((err) => {
@@ -68,9 +71,10 @@ basketController.put = function putInBasket(req, res) {
 
     let modifyPromises = modifyItemsInBasket(delta.modItems, req.user.basketId)
 
-    Promise.all(modifyPromises).then(() => {
+    Promise.all(modifyPromises).then((mods) => {
             res.status(201).json({
-                success: true
+                success: true,
+                mods
             })
         })
         .catch((err) => {
@@ -96,27 +100,26 @@ function addNewItemsToBasket(newBasketItems, basketId) {
     let addPromises = []
 
     // Iterate over items
-    newBasketItems.forEach((basketItem) => {
-        db.Item.findOne(basketItem.itemDef).then((itemDef) => {
-            if (!itemDef) {
-                return
-            }
+    newBasketItems.forEach(async (basketItem) => {
+        let itemDef = await db.Item.findOne(basketItem.itemDef)
+        if (!itemDef) {
+            itemDef = basketItem.itemDef
+        }
 
-            const newItem = new db.BasketItem({
-                itemDef: itemDef,
-                quantity: basketItem.quantity,
-                size: basketItem.size
-            })
-
-            // Push item to basket
-            let promise = db.Basket.findByIdAndUpdate(
-                    basketId,
-                    { $push: { 'items': newItem } },
-                    { safe: true, upsert: true }
-                ).exec()
-
-            addPromises.push(promise)
+        const newItem = new db.BasketItem({
+            itemDef,
+            quantity: basketItem.quantity,
+            size: basketItem.size
         })
+
+        // Push item to basket
+        let promise = db.Basket.findByIdAndUpdate(
+                basketId,
+                { $push: { 'items': newItem } },
+                { safe: true, upsert: true }
+            ).exec()
+
+        addPromises.push(promise)
     })
 
     return addPromises
@@ -125,12 +128,23 @@ function addNewItemsToBasket(newBasketItems, basketId) {
 function modifyItemsInBasket(modItems, basketId) {
     let modifyPromises = []
     
-        // Iterate over items
-        modItems.forEach((basketItem) => {
-            // Find item in basket
+    // Iterate over items
+    modItems.forEach((basketItem) => {
+        let promise = db.Basket.update(
+            { 
+                '_id': mongoose.Types.ObjectId(basketId), 
+                'items._id': mongoose.Types.ObjectId(basketItem._id) 
+            },
+            {
+                '$set': {
+                    'items.$.quantity': basketItem.quantity,
+                    'items.$.size': basketItem.size
+                }
+            }
+        )
 
-            // Make modifications to quantity or size
-        })
+        modifyPromises.push(promise)
+    })
     
     return modifyPromises
 }
