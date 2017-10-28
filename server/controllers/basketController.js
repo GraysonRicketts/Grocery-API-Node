@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import db from './../models/'
 
 
+// TODO: post, put, delete all have similiar pattern; possibly abstract and pullout
 const basketController = {}
 
 basketController.get = function getBasket(req, res) {
@@ -72,7 +73,7 @@ basketController.put = function putInBasket(req, res) {
     let modifyPromises = modifyItemsInBasket(delta.modItems, req.user.basketId)
 
     Promise.all(modifyPromises).then((mods) => {
-            res.status(201).json({
+            res.status(200).json({
                 success: true,
                 mods
             })
@@ -94,12 +95,25 @@ basketController.delete = function deleteFromBasket(req, res) {
 
         return
     }
+
+    let deletePromises = deleteItemsInBasket(delta.deletedItems, req.user.basketId)
+    
+    Promise.all(deletePromises).then((deletions) => {
+            res.status(200).json({
+                success: true,
+                deletions
+            })
+        })
+        .catch((err) => {
+            res.status(500).json({
+                success: false
+            })
+        })
 }
 
 function addNewItemsToBasket(newBasketItems, basketId) {
     let addPromises = []
 
-    // Iterate over items
     newBasketItems.forEach(async (basketItem) => {
         let itemDef = await db.Item.findOne(basketItem.itemDef)
         if (!itemDef) {
@@ -127,13 +141,12 @@ function addNewItemsToBasket(newBasketItems, basketId) {
 
 function modifyItemsInBasket(modItems, basketId) {
     let modifyPromises = []
-    
-    // Iterate over items
+
     modItems.forEach((basketItem) => {
         let promise = db.Basket.update(
-            { 
-                '_id': mongoose.Types.ObjectId(basketId), 
-                'items._id': mongoose.Types.ObjectId(basketItem._id) 
+            {
+                '_id': mongoose.Types.ObjectId(basketId),
+                'items._id': mongoose.Types.ObjectId(basketItem._id)
             },
             {
                 '$set': {
@@ -147,6 +160,27 @@ function modifyItemsInBasket(modItems, basketId) {
     })
     
     return modifyPromises
+}
+
+function deleteItemsInBasket(deletedItems, basketId) {
+    let deletionPromises = []
+
+    deletedItems.forEach((basketItem) => {
+        const itemToBeRemoved = 'items' + basketItem._id
+        
+        let promise = db.Basket.update(
+            {
+                _id: mongoose.Types.ObjectId(basketId),
+            },
+            {
+                '$pull': { 'items': { '_id': mongoose.Types.ObjectId(basketItem._id) } }
+            }
+        )
+
+        deletionPromises.push(promise)
+    })
+    
+    return deletionPromises
 }
 
 export default basketController

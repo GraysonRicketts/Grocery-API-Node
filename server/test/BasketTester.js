@@ -29,6 +29,7 @@ class BasketTester extends BaseTester {
             this.testGettingOneItem()
             // TODO: test adding multiple items
             this.testUpdatingOneItem()
+            this.testDeletingOneItem()
         })  
     }
 
@@ -134,6 +135,46 @@ class BasketTester extends BaseTester {
 
                             res2.body.success.should.be.eql(true)
                             res2.body.mods[0].ok.should.be.eql(1)
+
+                            done()
+                        })
+                        .catch((err) => {
+                            done(err)
+                        })
+                })
+                .catch((err) => {
+                    done(err)
+                })
+            })
+    }
+
+    testDeletingOneItem() {
+        it ('should delete 1 item', (done) => {
+            this.__agent.get('/api/basket')
+                .send()
+                .then((res) => {
+                    if (res.body.success === false) {
+                        done('Failed to get basket')
+                    }
+
+                    // Modify item
+                    let itemToBeDeleted = res.body.basket.items[0]
+
+                    // Create delta
+                    let items = {
+                        delta: {}
+                    }
+                    items.delta.deletedItems = [ itemToBeDeleted ]
+
+                    this.__agent.delete('/api/basket')
+                        .send(items)
+                        .then((res2) => {
+                            if (res2.body.success === false) {
+                                done('Failed to update basket')
+                            }
+
+                            res2.body.success.should.be.eql(true)
+                            res2.body.deletions[0].nModified.should.be.eql(1)
 
                             done()
                         })
