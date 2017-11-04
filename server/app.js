@@ -6,7 +6,7 @@ import session from 'express-session'
 import connectRedis from 'connect-redis'
 
 import routes from './routes'
-import passport from './../config/passport'
+import passport from './config/passport'
 
 
 const RedisStore = connectRedis(session)

@@ -4,7 +4,7 @@ import express from 'express'
 import basketController from './controllers/basketController'
 import itemController from './controllers/itemController'
 import userController from './controllers/userController'
-import passport from './../config/passport'
+import passport from './config/passport'
 
 
 const routes = express()
