@@ -1,0 +1,13 @@
+version: '2.1'
+
+services:
+  grocery-app:
+    image: grocery-app.test
+    build: .
+    environment:
+      NODE_ENV: test
+      DB_HOST: mongodb://localhost:27017/test-grocery
+    ports:
+      - 3000:3000
+    ## set your startup file here
+    command: nopm start
