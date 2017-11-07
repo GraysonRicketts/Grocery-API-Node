@@ -19,7 +19,6 @@ const collections = [
     db.User,
     db.Item
 ]
-
 const itemTester = new ItemTester()
 const userTester = new UserTester(agent)
 
@@ -35,7 +34,7 @@ describe('API', () => {
 
 
 /*
- * Reset Tests
+ * DB Reset Tests
  */
 function testResetingCollections(done) {
     resetCollections().then(() => {

@@ -1,24 +1,24 @@
+# Use an official node runtime as a parent image
 FROM node:8.9-alpine
 
-WORKDIR .
-ADD . .
+# Set the working directory to /server
+WORKDIR /
 
+# Copy the directory contents into container
+ADD ./server /server
+ADD ./seeds /seeds
+ADD ./bin/test /bin/test
+ADD ./package.json /package.json
+ADD ./.babelrc /.babelrc
+
+# Install packages
 RUN npm install
 
+# Expose port
 EXPOSE 3000
 
+# Define environment variable
 ENV NODE_ENV test
+
+# Run tests
 CMD ["npm", "run", "test"]
-
-
-# Copy source code
-COPY . /app
-
-# Change working directory
-WORKDIR /app
-
-# Install dependencies
-RUN npm install
-
-# Expose API port to the outside
-EXPOSE 80
