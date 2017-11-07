@@ -65,6 +65,3 @@ typings/
 
 # Redis file
 dump.rdb
-
-# Package-lock
-package-lock.json
