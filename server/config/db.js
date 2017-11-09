@@ -5,14 +5,15 @@ let db = {}
 
 db.connect = async function() {
     try {
-        await mongoose.connect(process.env.DB_HOST, { useMongoClient: true })
+        const dbUri = 'mongodb://mongodb:' + process.env.MONGODB_PORT
+        await mongoose.connect(dbUri, { useMongoClient: true })
     }
     catch(err) {
-        throwMongooseError(err)
+        throwMongooseError('Failed to connect', err)
     }
 
     mongoose.connection.on('error', (err) => {
-        throwMongooseError(err)
+        throwMongooseError('General error', err)
     })
 
     mongoose.connection.on('disconnected', () => {  
@@ -27,8 +28,14 @@ db.connect = async function() {
     })
 }
 
-function throwMongooseError(msg) {
-    console.error('Mongoose error: ' + msg)
+function throwMongooseError(msg, err) {
+    let errMsg = '(' + msg + ')'
+
+    if (err) {
+        errMsg = errMsg + err
+    }
+
+    console.error('Mongoose error: ' + errMsg)
     process.exit(1)
 }
 
