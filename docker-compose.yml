@@ -10,6 +10,8 @@ services:
       - NODE_ENV=development
       - MONGODB_PORT=27017
       - MONGODB_NAME=grocery-app
+    ports:
+     - '3000:3000'
     volumes:
       - ./server:/server
     links:
