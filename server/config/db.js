@@ -5,7 +5,7 @@ let db = {}
 
 db.connect = async function() {
     try {
-        const dbUri = 'mongodb://mongodb:' + process.env.MONGODB_PORT
+        const dbUri = 'mongodb://127.0.0.1:' + process.env.MONGODB_PORT + '/grocery-app'
         await mongoose.connect(dbUri, { useMongoClient: true })
     }
     catch(err) {

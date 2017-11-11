@@ -9,7 +9,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha bin/test --timeout 10000",
-    "start": "nodemon --inspect bin/dev",
+    "start": "MONGODB_PORT=27017 nodemon --inspect bin/dev",
     "clean": "rm -rf dist",
     "build": "npm run clean && mkdir dist && babel server -s -d dist",
     "production": "npm run build && node bin/production"
