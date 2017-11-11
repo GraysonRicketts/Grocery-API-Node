@@ -1,10 +1,10 @@
-import db from './../server/models'
+import Item from './../server/models/Item'
 
 
 const seeders = {}
 
 seeders.seedItems = function() {
-    return db.Item.find()
+    return Item.find()
         .remove()
         .then(() => {
             let insertPromises = []

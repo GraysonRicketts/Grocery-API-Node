@@ -1,8 +1,20 @@
-FROM node:6-alpine
-ENV NODE_ENV production
-WORKDIR /usr/src/app
-COPY ["package.json", "npm-shrinkwrap.json*", "./"]
-RUN npm install --production --silent && mv node_modules ../
-COPY . .
+# Use an official node runtime as a parent image
+FROM node:8.9-alpine
+
+# Set the working directory
+WORKDIR /
+
+# Copy the directory contents into container
+ADD ./server /server
+ADD ./bin/dev /bin/dev
+ADD ./package.json /package.json
+ADD ./.babelrc /.babelrc
+
+# Install packages
+RUN npm install
+
+# Expose port
 EXPOSE 3000
-CMD ["npm", "run", "test"]
+
+# Run tests
+CMD ["npm", "start"]

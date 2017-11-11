@@ -9,6 +9,7 @@ services:
     environment:
       - NODE_ENV=test
       - MONGODB_PORT=27017
+      - MONGODB_NAME=test-grocery
     links:
       - mongodb
       - redis
