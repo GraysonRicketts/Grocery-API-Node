@@ -11,7 +11,8 @@ const Categories = [
     'seafood',
     'frozen',
     'beer/wine/liquor',
-    'dry goods/pantry'
+    'dry goods/pantry',
+    'other'
 ]
 
 // TODO: Possibly add sizes category / validation?
