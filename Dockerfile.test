@@ -6,6 +6,7 @@ WORKDIR /
 
 # Copy the directory contents into container
 ADD ./server /server
+ADD ./test /test
 ADD ./seeds /seeds
 ADD ./bin/test /bin/test
 ADD ./package.json /package.json
