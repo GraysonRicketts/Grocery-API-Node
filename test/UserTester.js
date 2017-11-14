@@ -1,6 +1,6 @@
 import chai from 'chai'
 
-import User from './../models/User'
+import User from './../server/models/User'
 import BaseTester from './BaseTester'
 import BasketTester from './BasketTester'
 

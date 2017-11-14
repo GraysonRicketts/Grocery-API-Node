@@ -1,13 +1,13 @@
 import BaseTester from './BaseTester'
-import Item from './../models/Item'
-import seeders from './../../seeds'
+import Item from './../server/models/Item'
+import seeders from './../seeds'
 
 
 class ItemTester extends BaseTester {
     constructor() {
         super(Item, null)
 
-        this.__numItems = require('./../../seeds/data/items').numItems
+        this.__numItems = require('./../seeds/data/items').numItems
     }
 
     runAllTests() {
