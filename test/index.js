@@ -9,7 +9,7 @@ import ItemTester from './ItemTester'
 import UserTester from './UserTester'
 
 // Pre-app initializations
-require('./../config')
+require('./../server/config')
 chai.use(chaiHttp)
 
 
