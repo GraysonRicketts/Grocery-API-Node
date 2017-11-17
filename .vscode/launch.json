@@ -1,0 +1,39 @@
+{
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "name": "Attach to Mocha in Docker",
+                "type": "node",
+                "request": "attach",
+                "port": 5858,
+                "preLaunchTask": "runmochaindocker",
+                "address": "localhost",
+                "restart": false,
+                "sourceMaps": false,
+                "localRoot": "${workspaceRoot}/",
+                "remoteRoot": "/"
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Mocha Tests",
+                "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+                "args": [
+                    "bin/test",
+                    "--inspect",
+                    "--timeout",
+                    "100000"
+                ],
+                "internalConsoleOptions": "openOnSessionStart"
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Launch Program",
+                "program": "${file}",
+                "args": [
+                    "bin/dev"
+                ]
+            }
+        ]
+    }
