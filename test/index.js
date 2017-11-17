@@ -30,6 +30,10 @@ describe('API', () => {
 
     itemTester.runAllTests()
     userTester.runAllTests()
+
+    after(() => {
+        process.exit(0)
+    })
 })
 
 
