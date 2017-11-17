@@ -11,7 +11,7 @@ seeders.seedItems = function() {
             let data = require('./data/items').data
 
             data.forEach((element) => {
-                const newDocument = new db.Item(element)
+                const newDocument = new Item(element)
                 insertPromises.push(newDocument.save())
             })
 
