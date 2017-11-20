@@ -60,8 +60,5 @@ typings/
 # dotenv environment variables file
 .env
 
-# Visual studio settings
-.vscode/
-
 # Redis file
 dump.rdb

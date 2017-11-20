@@ -3,20 +3,16 @@ version: '3.3'
 services:
   grocery-app:
     image: grocery-app
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     environment:
       - NODE_ENV=development
       - MONGODB_PORT=27017
       - MONGODB_NAME=grocery-app
     ports:
-     - '3000:3000'
+      - '3000:3000'
+      - '5858:5858'
     volumes:
       - ./server:/server
-    links:
-      - mongodb
-      - redis
     depends_on:
       - mongodb
       - redis

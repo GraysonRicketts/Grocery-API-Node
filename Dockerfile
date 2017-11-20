@@ -13,8 +13,5 @@ ADD ./.babelrc /.babelrc
 # Install packages
 RUN npm install
 
-# Expose port
-EXPOSE 3000
-
 # Run tests
 CMD ["npm", "start"]
