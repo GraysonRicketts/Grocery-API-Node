@@ -8,8 +8,8 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "mocha bin/test --timeout 10000",
-    "start": "nodemon --watch server --watch bin/dev --watch package.json --inspect bin/dev",
+    "test": "mocha --inspect-brk=6767 --timeout 30000 bin/test",
+    "start": "nodemon --watch server --watch bin/dev --watch package.json --inspect=5858 bin/dev",
     "clean": "rm -rf dist",
     "build": "npm run clean && mkdir dist && babel server -s -d dist",
     "production": "npm run build && node bin/production"

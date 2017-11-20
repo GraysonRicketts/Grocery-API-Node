@@ -14,13 +14,6 @@ WORKDIR $HOME/grocery
 
 # Copy files
 COPY package.json .babelrc $HOME/grocery/
-COPY bin/test $HOME/grocery/bin
-COPY seeds $HOME/grocery/seeds
-COPY server $HOME/grocery/server
-COPY test $HOME/grocery/test
-
-# Make directory for modules
-# RUN mkdir $HOME/grocery/node_modules
 
 # Install dependencies
 RUN npm install
