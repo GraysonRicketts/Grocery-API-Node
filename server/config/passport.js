@@ -35,6 +35,12 @@ passport.deserializeUser((sessionUser, done) => {
     done(null, sessionUser)
 })
 
+/**
+ * Checks to see if the password provided matches the password in the database
+ * @param {string} password 
+ * @param {string} user 
+ * @param {Function} done 
+ */
 function checkUserPassword(password, user, done) {
     bcrypt.compare(password, user.password)
         .then((res) => {

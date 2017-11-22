@@ -111,6 +111,14 @@ basketController.delete = function deleteFromBasket(req, res) {
         })
 }
 
+/**
+ * Adds new objects to the database
+ * @param {Object[]} newBasketItems
+ * @param {Object} newBasketItems[].itemDef
+ * @param {string} newBasketItems[].size
+ * @param {Number} newBasketItems[].quantity
+ * @param {mongoose.ObjectId} basketId
+ */
 function addNewItemsToBasket(newBasketItems, basketId) {
     let addPromises = []
 
