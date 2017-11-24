@@ -1,0 +1,28 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch in Docker",
+            "protocol": "inspector",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [ "run", "docker-debug" ],
+            "port": 5858,
+            "restart": true,
+            "timeout": 60000,
+            "localRoot": "${workspaceRoot}",
+            "remoteRoot": "/",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "skipFiles": [
+                "${workspaceFolder}/node_modules/**/*.js",
+                "${workspaceFolder}/lib/**/*.js",
+                "<node_internals>/**/*.js"
+              ]
+          }
+    ]
+}

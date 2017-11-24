@@ -1,16 +1,13 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
-import redis from 'redis'
 import session from 'express-session'
-import connectRedis from 'connect-redis'
 
 import routes from './routes'
 import passport from './config/passport'
 
 
-const RedisStore = connectRedis(session)
-const client = redis.createClient()
+const RedisStore = require('connect-redis')(session)
 const app = express()
 
 app
@@ -22,12 +19,15 @@ app
     }))
     .use(session({
         secret: 'TODO: Move secret to more secure location',
-        store: new RedisStore({ 
-            host: 'localhost', 
-            port: 6379, 
-            client: client,
-            ttl :  60 * 24 * 7 
+        store: new RedisStore({
+            host: 'redis',
+            port: 6379,
+            ttl :  60 * 24 * 7
         }),
+        cookie: {
+            secure: false,
+            maxAge : 60 * 60 * 24 * 14
+        },
         resave: false,
         saveUninitialized: false
     }))

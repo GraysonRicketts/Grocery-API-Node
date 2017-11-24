@@ -9,26 +9,31 @@ db.connect = async function() {
         await mongoose.connect(dbUri, { useMongoClient: true })
     }
     catch(err) {
-        throwMongooseError('Failed to connect', err)
+        logErrorAndExit('Failed to connect', err)
     }
 
     mongoose.connection.on('error', (err) => {
-        throwMongooseError('General error', err)
+        logErrorAndExit('General error', err)
     })
 
     mongoose.connection.on('disconnected', () => {  
-        throwMongooseError('Mongoose default connection disconnected')
+        logErrorAndExit('Mongoose default connection disconnected')
     })
 
     // If the Node process ends, close the Mongoose connection 
     process.on('SIGINT', function() {
         mongoose.connection.close(() => {
-            throwMongooseError('Mongoose default connection disconnected through app termination SIGINT')
+            logErrorAndExit('Mongoose default connection disconnected through app termination SIGINT')
         })
     })
 }
 
-function throwMongooseError(msg, err) {
+/**
+ * Logs an error then exits
+ * @param {string} msg 
+ * @param {Error} [err]
+ */
+function logErrorAndExit(msg, err) {
     let errMsg = '(' + msg + ')'
 
     if (err) {

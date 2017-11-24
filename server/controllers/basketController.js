@@ -33,7 +33,7 @@ basketController.get = function getBasket(req, res) {
         })
 }
 
-basketController.post = function postBasket(req, res) {
+basketController.post = function postToBasket(req, res) {
     const delta = req.body.delta
 
     if (!delta || !delta.newItems) {
@@ -111,6 +111,14 @@ basketController.delete = function deleteFromBasket(req, res) {
         })
 }
 
+/**
+ * Adds new objects to the database
+ * @param {Object[]} newBasketItems
+ * @param {Object} newBasketItems[].itemDef
+ * @param {string} newBasketItems[].size
+ * @param {Number} newBasketItems[].quantity
+ * @param {mongoose.ObjectId} basketId
+ */
 function addNewItemsToBasket(newBasketItems, basketId) {
     let addPromises = []
 
