@@ -33,7 +33,7 @@ basketController.get = function getBasket(req, res) {
         })
 }
 
-basketController.post = function postBasket(req, res) {
+basketController.post = function postToBasket(req, res) {
     const delta = req.body.delta
 
     if (!delta || !delta.newItems) {
