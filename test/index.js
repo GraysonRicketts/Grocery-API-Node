@@ -1,15 +1,15 @@
 import chai from 'chai'
 import chaiHttp from 'chai-http'
 
-import app from './../app'
-import db from './../models'
-import seeds from './../../seeds'
+import app from './../server/app'
+import db from './../server/models'
+import seeds from './../seeds'
 import BaseTester from './BaseTester'
 import ItemTester from './ItemTester'
 import UserTester from './UserTester'
 
 // Pre-app initializations
-require('./../config')
+require('./../server/config')
 chai.use(chaiHttp)
 
 
@@ -30,6 +30,10 @@ describe('API', () => {
 
     itemTester.runAllTests()
     userTester.runAllTests()
+
+    after(() => {
+        process.exit(0)
+    })
 })
 
 

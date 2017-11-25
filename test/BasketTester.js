@@ -1,7 +1,6 @@
 import chai from 'chai'
 
-import db from './../models'
-import Basket from './../models/Basket'
+import Basket from './../server/models/Basket'
 import BaseTester from './BaseTester'
 
 const should = chai.should()
