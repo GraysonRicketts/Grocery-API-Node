@@ -1,13 +1,16 @@
 # Use an official node runtime as a parent image
 FROM node:8.9-alpine
 
-# Create and set working directory
-ENV HOME=/home/app
-RUN mkdir -p $HOME/grocery
-WORKDIR $HOME/grocery
+# Set the working directory
+WORKDIR /
 
-# Copy files
-COPY package.json .babelrc $HOME/grocery/
+# Copy the directory contents into container
+ADD ./test /test
+ADD ./seeds /seeds
+ADD ./server /server
+ADD ./bin/test /bin/test
+ADD ./package.json /package.json
+ADD ./.babelrc /.babelrc
 
 # Install dependencies
 RUN npm install

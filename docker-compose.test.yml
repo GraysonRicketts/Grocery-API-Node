@@ -7,8 +7,9 @@ services:
       context: .
       dockerfile: test/Dockerfile
     volumes:
-      - .:/home/app/grocery
-      - /home/app/grocery/node_modules
+      - ./server:/server
+      - ./test:/test
+      - /node_modules
     environment:
       - NODE_ENV=test
       - MONGODB_PORT=27017

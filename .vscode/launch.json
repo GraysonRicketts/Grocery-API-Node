@@ -2,21 +2,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Attach to Mocah in Docker",
             "type": "node",
             "request": "attach",
-            "protocol": "inspector",
+            "name": "Attach to tests in Docker",
+            "preLaunchTask": "Run mocha in docker",
             "port": 6767,
-            "address": "localhost",
-            "restart": false,
-            "sourceMaps": false,
+            "restart": true,
             "localRoot": "${workspaceRoot}",
-            "remoteRoot": "/home/app/grocery",
-            "skipFiles": [
-                "${workspaceFolder}/node_modules/**/*.js",
-                "${workspaceFolder}/lib/**/*.js",
-                "<node_internals>/**/*.js"
-            ]
+            "remoteRoot": "/"
         },
         {
             "type": "node",
