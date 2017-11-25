@@ -3,22 +3,13 @@
     "configurations": [
         {
             "type": "node",
-            "request": "launch",
-            "name": "Run tests in Docker",
-            "protocol": "inspector",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": [ "run", "test-in-docker" ],
+            "request": "attach",
+            "name": "Attach to tests in Docker",
+            "preLaunchTask": "Run mocha in docker",
             "port": 6767,
-            "timeout": 60000,
+            "restart": true,
             "localRoot": "${workspaceRoot}",
-            "remoteRoot": "/home/app/grocery",
-            "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen",
-            "skipFiles": [
-                "${workspaceFolder}/node_modules/**/*.js",
-                "${workspaceFolder}/lib/**/*.js",
-                "<node_internals>/**/*.js"
-            ]
+            "remoteRoot": "/"
         },
         {
             "type": "node",
