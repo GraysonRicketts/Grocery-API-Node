@@ -2,16 +2,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Attach to Mocah in Docker",
             "type": "node",
-            "request": "attach",
+            "request": "launch",
+            "name": "Run tests in Docker",
             "protocol": "inspector",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [ "run", "test-in-docker" ],
             "port": 6767,
-            "address": "localhost",
-            "restart": false,
-            "sourceMaps": false,
+            "timeout": 60000,
             "localRoot": "${workspaceRoot}",
             "remoteRoot": "/home/app/grocery",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
             "skipFiles": [
                 "${workspaceFolder}/node_modules/**/*.js",
                 "${workspaceFolder}/lib/**/*.js",

@@ -14,6 +14,7 @@ services:
       - '5858:5858'
     volumes:
       - ./server:/server
+      - /node_modules
     depends_on:
       - mongodb
       - redis
