@@ -16,10 +16,6 @@ services:
       - APP_PORT=3600
     ports:
       - '6767:6767'
-    expose:
-      - '6767'
-    links:
-      - mongodb
     depends_on:
       - mongodb
       - redis
@@ -35,3 +31,5 @@ services:
   redis:
     image: redis:alpine
     container_name: 'redis'
+    ports:
+      - '6379:6379'

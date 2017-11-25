@@ -8,11 +8,12 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "mocha --inspect-brk=6767 --timeout 30000 bin/test",
+    "test": "mocha --inspect-brk=6767 --nolazy bin/test",
     "start": "nodemon --watch server --watch bin/dev --watch package.json --inspect=5858 bin/dev",
     "clean": "rm -rf dist",
     "build": "npm run clean && mkdir dist && babel server -s -d dist",
-    "production": "npm run build && node bin/production"
+    "production": "npm run build && node bin/production",
+    "test-in-docker": "docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit"
   },
   "author": "",
   "license": "ISC",

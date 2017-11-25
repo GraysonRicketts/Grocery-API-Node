@@ -23,7 +23,7 @@ app
     .use(session({
         secret: 'TODO: Move secret to more secure location',
         store: new RedisStore({ 
-            host: 'localhost', 
+            host: 'redis', 
             port: 6379, 
             client: client,
             ttl :  60 * 24 * 7 
