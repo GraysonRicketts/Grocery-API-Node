@@ -13,7 +13,8 @@
     "clean": "rm -rf dist",
     "build": "npm run clean && mkdir dist && babel server -s -d dist",
     "production": "npm run build && node bin/production",
-    "test-in-docker": "docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit"
+    "test-in-docker": "docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit",
+    "docker-debug": "docker-compose -f docker-compose.yml up --build --abort-on-container-exit"
   },
   "author": "",
   "license": "ISC",
