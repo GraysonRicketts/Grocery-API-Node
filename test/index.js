@@ -3,7 +3,6 @@ import chaiHttp from 'chai-http'
 
 import app from './../server/app'
 import db from './../server/models'
-import seeds from './../seeds'
 import BaseTester from './BaseTester'
 import ItemTester from './ItemTester'
 import UserTester from './UserTester'
@@ -42,25 +41,25 @@ describe('API', () => {
  */
 function testResetingCollections(done) {
     resetCollections().then(() => {
-        collections.forEach((collection) => {
-            if (!isCollectionEmpty(collection)) {
-                throw new Error('Failed to reset ' + collection.modelName)
-            }
-        })
+            collections.forEach((collection) => {
+                if (!isCollectionEmpty(collection)) {
+                    throw new Error('Failed to reset ' + collection.modelName)
+                }
+            })
 
-        done()
-    })
-    .catch((err) => {
-        done(err)
-    })
+            done()
+        })
+        .catch((err) => {
+            done(err)
+        })
 }
 
 function resetCollections() {
     let removalPromises = []
-    
+
     collections.forEach((collection) => {
         let promise = collection.remove({}).exec()
-        
+
         removalPromises.push(promise)
     })
 
