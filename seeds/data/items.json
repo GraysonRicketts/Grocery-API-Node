@@ -1,40 +1,34 @@
 {
-    "numItems" : 7,
-    "data": [
-        { 
+    "numItems": 7,
+    "data": [{
             "title": "apple",
             "category": "produce",
-            "brand": "test"
+            "note": "lookin' good"
         },
-        { 
+        {
             "title": "2% milk",
-            "category": "dairy",
-            "brand": "test"
+            "category": "dairy"
         },
-        { 
+        {
             "title": "porterhouse steak",
-            "category": "meat",
-            "brand": "test"
+            "category": "meat"
         },
-        { 
+        {
             "title": "salmon",
             "category": "seafood",
-            "brand": "test"
+            "note": "the best ** Trump voice **"
         },
-        { 
+        {
             "title": "peas",
-            "category": "frozen",
-            "brand": "test"
+            "category": "frozen"
         },
-        { 
+        {
             "title": "absolut vodka",
-            "category": "beer/wine/liquor",
-            "brand": "test"
+            "category": "beer/wine/liquor"
         },
-        { 
+        {
             "title": "pasta",
-            "category": "dry goods/pantry",
-            "brand": "test"
+            "category": "dry goods/pantry"
         }
     ]
 }
