@@ -11,7 +11,7 @@ const RedisStore = require('connect-redis')(session)
 const app = express()
 
 app
-    // Middleware
+// Middleware
     .use(cookieParser())
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({
@@ -22,21 +22,21 @@ app
         store: new RedisStore({
             host: 'redis',
             port: 6379,
-            ttl :  60 * 24 * 7
+            ttl: 60 * 24 * 7
         }),
         cookie: {
             secure: false,
-            maxAge : 60 * 60 * 24 * 14
+            maxAge: 60 * 60 * 24 * 14
         },
         resave: false,
         saveUninitialized: false
     }))
 
-    // Authentication
-    .use(passport.initialize())
+// Authentication
+.use(passport.initialize())
     .use(passport.session())
 
-    // Routes
-    .use('/api', routes)
+// Routes
+.use('/api', routes)
 
 export default app
