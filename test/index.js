@@ -25,7 +25,7 @@ const userTester = new UserTester(agent)
  * Start point for all tests
  */
 describe('API', () => {
-    before(testResetingCollections)
+    before(testCollectionsEmpty)
 
     itemTester.runAllTests()
     userTester.runAllTests()
@@ -39,31 +39,14 @@ describe('API', () => {
 /*
  * DB Reset Tests
  */
-function testResetingCollections(done) {
-    resetCollections().then(() => {
-            collections.forEach((collection) => {
-                if (!isCollectionEmpty(collection)) {
-                    throw new Error('Failed to reset ' + collection.modelName)
-                }
-            })
-
-            done()
-        })
-        .catch((err) => {
-            done(err)
-        })
-}
-
-function resetCollections() {
-    let removalPromises = []
-
+function testCollectionsEmpty(done) {
     collections.forEach((collection) => {
-        let promise = collection.remove({}).exec()
-
-        removalPromises.push(promise)
+        if (!isCollectionEmpty(collection)) {
+            throw new Error('Failed to reset ' + collection.modelName)
+        }
     })
 
-    return Promise.all(removalPromises)
+    done()
 }
 
 async function isCollectionEmpty(collection) {
