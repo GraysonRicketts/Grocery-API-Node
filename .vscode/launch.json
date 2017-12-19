@@ -19,7 +19,7 @@
             "runtimeArgs": ["run", "docker-debug"],
             "port": 5858,
             "restart": true,
-            "timeout": 60000,
+            "timeout": 15000,
             "localRoot": "${workspaceRoot}",
             "remoteRoot": "/",
             "console": "integratedTerminal",
