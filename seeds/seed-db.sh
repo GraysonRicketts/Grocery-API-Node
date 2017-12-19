@@ -1,4 +1,3 @@
-./wait-for mongodb:270127
+# TODO: ./wait-for mongodb:27017
 
-mongoimport --db mongodb --collection users --file users.json
-mongoimport --db mongodb --collection items --file items.json
+mongoimport --host mongodb:27017 --db grocery-app --collection items --file items.json
