@@ -1,4 +1,4 @@
-version: '3.3'
+version: "3.3"
 
 services:
   grocery-app-tests:
@@ -20,6 +20,7 @@ services:
     depends_on:
       - mongodb
       - redis
+    command: ["./wait-for-it.sh", "mongodb:27017", "--", "./wait-for-it.sh", "redis:6379", "--", "npm", "run", "test"]
   mongodb:
     image: mongo:latest
     container_name: 'mongodb'
@@ -27,10 +28,10 @@ services:
       - MONGO_DATA_DIR=/data/db
       - MONGO_LOG_DIR=/dev/null
     ports:
-      - '27017:27017'
-    command: mongod --smallfiles --logpath=/dev/null --quiet
+      - "27017:27017"
+    command: ["mongod", "--quiet", "--bind_ip_all"]
   redis:
     image: redis:alpine
-    container_name: 'redis'
+    container_name: "redis"
     ports:
-      - '6379:6379'
+      - "6379:6379"

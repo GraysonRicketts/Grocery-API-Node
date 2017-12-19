@@ -9,9 +9,7 @@ ADD ./server /server
 ADD ./bin/dev /bin/dev
 ADD ./package.json /package.json
 ADD ./.babelrc /.babelrc
+ADD ./wait-for /wait-for
 
 # Install packages
-RUN npm install
-
-# Run tests
-CMD ["npm", "start"]
+RUN ["npm", "install"]
