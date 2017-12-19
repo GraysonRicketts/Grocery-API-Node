@@ -1,7 +1,6 @@
 import mongoose from 'mongoose'
 
 
-// TODO: Consider changin item to a readonly database
 const { Schema } = mongoose
 
 const Categories = [
@@ -15,20 +14,21 @@ const Categories = [
     'other'
 ]
 
-// TODO: Possibly add sizes category / validation?
 const itemSchema = new Schema({
-    title: { 
-        type: String, 
-        required: true 
+    title: {
+        type: String,
+        required: true
     },
-    category: { 
-        type: String, 
-        enum : Categories 
+    category: {
+        type: String,
+        enum: Categories
     },
-    brand: {
-        type: String // TODO: Possible change to object for faster lookup
+    note: {
+        type: String,
+        maxlength: 250,
+        trim: true
     },
-    
+
     isDeleted: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now }
 })
