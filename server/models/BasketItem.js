@@ -1,13 +1,17 @@
 import mongoose from 'mongoose'
 
+import Item from './Item'
 
 const { Schema } = mongoose
 
 const basketItemSchema = new Schema({
     itemDef: {
-        type: Schema.Types.ObjectId,
-        ref: 'Item',
-        required: true
+        _id: {
+            type: Schema.Types.ObjectId,
+            ref: 'Item'
+        },
+        title: { type: String },
+        category: { type: String }
     },
     quantity: { type: Number },
     size: { type: String },

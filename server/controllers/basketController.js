@@ -6,18 +6,12 @@ const basketController = {}
 
 basketController.get = function getBasket(req, res) {
     db.Basket.findById(req.user.basketId)
-        .populate({
-            path: 'items.itemDef',
-            model: 'Item',
-            select: 'title category brand'
-        })
         .then((basket) => {
             if (basket) {
                 res.status(200).json({
                     basket
                 })
-            }
-            else {
+            } else {
                 res.status(500).json({
                     success: false
                 })
@@ -25,6 +19,7 @@ basketController.get = function getBasket(req, res) {
 
         })
         .catch((err) => {
+            console.error(err)
             res.status(500).json({
                 success: false
             })
@@ -42,15 +37,13 @@ basketController.post = function postToBasket(req, res) {
         return
     }
 
-    let addPromises = addNewItemsToBasket(delta.newItems, req.user.basketId)
-
-    Promise.all(addPromises).then((newItems) => {
+    addNewItemsToBasket(delta.newItems, req.user.basketId).then(() => {
             res.status(201).json({
-                success: true,
-                newItems
+                success: true
             })
         })
         .catch((err) => {
+            console.error(err)
             res.status(500).json({
                 success: false
             })
@@ -95,7 +88,7 @@ basketController.delete = function deleteFromBasket(req, res) {
     }
 
     let deletePromises = deleteItemsInBasket(delta.deletedItems, req.user.basketId)
-    
+
     Promise.all(deletePromises).then((deletions) => {
             res.status(200).json({
                 success: true,
@@ -113,58 +106,75 @@ basketController.delete = function deleteFromBasket(req, res) {
  * Adds new objects to the database
  * @param {Object[]} newBasketItems
  * @param {Object} newBasketItems[].itemDef
- * @param {string} newBasketItems[].size
+ * @param {mongoose.ObjectId} newBasketItems[].itemDef._id
+ * @param {String} newBasketItems[].itemDef.title
+ * @param {String} newBasketItems[].itemDef.category
  * @param {Number} newBasketItems[].quantity
+ * @param {String} newBasketItems[].size
+ * @param {String} newBasketItems[].note
  * @param {mongoose.ObjectId} basketId
  */
 function addNewItemsToBasket(newBasketItems, basketId) {
-    let addPromises = []
-
-    newBasketItems.forEach(async (basketItem) => {
+    // Get items if they already exist in database
+    const basketTransforms = newBasketItems.map(async(basketItem) => {
         let itemDef = await db.Item.findOne(basketItem.itemDef)
         if (!itemDef) {
-            itemDef = basketItem.itemDef
+            itemDef = new db.Item(basketItem.itemDef)
         }
 
-        const newItem = new db.BasketItem({
-            itemDef,
-            quantity: basketItem.quantity,
-            size: basketItem.size
-        })
-
-        // Push item to basket
-        let promise = db.Basket.findByIdAndUpdate(
-                basketId,
-                { $push: { 'items': newItem } },
-                { safe: true, upsert: true }
-            ).exec()
-
-        addPromises.push(promise)
+        basketItem.itemDef = itemDef
+        return new db.BasketItem(basketItem)
     })
 
-    return addPromises
+    return Promise.all(basketTransforms).then(newBasketItems => {
+        return db.Basket.findById(basketId).then((basket) => {
+            newBasketItems.forEach((basketItem) => {
+                // See if item already exists in database
+                let index = basket.items.findIndex((element) => {
+                    return element.itemDef._id.equals(basketItem.itemDef._id)
+                })
+
+                // Item found in basket so update / add on to
+                if (index !== -1) {
+                    let currQuantity = basket.items[index].quantity
+                    basket.items[index].quantity = currQuantity + basketItem.quantity
+
+                    if (basketItem.size) {
+                        basket.items[index].size = basketItem.size
+                    }
+
+                    if (basketItem.note) {
+                        basket.items[index].note = basketItem.note
+                    }
+
+                    return
+                }
+
+                basket.items.push(basketItem)
+            })
+
+            return db.Basket.findByIdAndUpdate(basketId, { $set: { items: basket.items } })
+        })
+    })
 }
 
 function modifyItemsInBasket(modItems, basketId) {
     let modifyPromises = []
 
     modItems.forEach((basketItem) => {
-        let promise = db.Basket.update(
-            {
-                '_id': mongoose.Types.ObjectId(basketId),
-                'items._id': mongoose.Types.ObjectId(basketItem._id)
-            },
-            {
-                '$set': {
-                    'items.$.quantity': basketItem.quantity,
-                    'items.$.size': basketItem.size
-                }
+        let promise = db.Basket.update({
+            '_id': mongoose.Types.ObjectId(basketId),
+            'items._id': mongoose.Types.ObjectId(basketItem._id)
+        }, {
+            '$set': {
+                'items.$.quantity': basketItem.quantity,
+                'items.$.size': basketItem.size
             }
-        )
+        })
 
         modifyPromises.push(promise)
     })
-    
+
     return modifyPromises
 }
 
@@ -173,19 +183,16 @@ function deleteItemsInBasket(deletedItems, basketId) {
 
     deletedItems.forEach((basketItem) => {
         const itemToBeRemoved = 'items' + basketItem._id
-        
-        let promise = db.Basket.update(
-            {
-                _id: mongoose.Types.ObjectId(basketId),
-            },
-            {
-                '$pull': { 'items': { '_id': mongoose.Types.ObjectId(basketItem._id) } }
-            }
-        )
+
+        let promise = db.Basket.update({
+            _id: mongoose.Types.ObjectId(basketId),
+        }, {
+            '$pull': { 'items': { '_id': mongoose.Types.ObjectId(basketItem._id) } }
+        })
 
         deletionPromises.push(promise)
     })
-    
+
     return deletionPromises
 }
 
