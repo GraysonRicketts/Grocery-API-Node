@@ -10,7 +10,12 @@ const basketItemSchema = new Schema({
         required: true
     },
     quantity: { type: Number },
-    size: { type: String }
+    size: { type: String },
+    note: {
+        type: String,
+        maxlength: 250,
+        trim: true
+    },
 })
 
 const BasketItem = mongoose.model('BasketItem', basketItemSchema)
