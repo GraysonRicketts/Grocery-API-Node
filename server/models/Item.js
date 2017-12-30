@@ -23,11 +23,6 @@ const itemSchema = new Schema({
         type: String,
         enum: Categories
     },
-    note: {
-        type: String,
-        maxlength: 250,
-        trim: true
-    },
 
     isDeleted: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now }

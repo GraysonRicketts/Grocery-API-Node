@@ -1,17 +1,25 @@
 import mongoose from 'mongoose'
 
+import Item from './Item'
 
 const { Schema } = mongoose
 
 const basketItemSchema = new Schema({
-  // TODO: Becuase this is never being saved it is never being validated
-  itemDef: { 
-    type: Schema.Types.ObjectId,
-    ref: 'Item',
-    required: true
-  },
-  quantity: { type: Number, required: true },
-  size: { type: String } // TODO: Expand to have multiple types of size or category list to choose from
+    itemDef: {
+        _id: {
+            type: Schema.Types.ObjectId,
+            ref: 'Item'
+        },
+        title: { type: String },
+        category: { type: String }
+    },
+    quantity: { type: Number },
+    size: { type: String },
+    note: {
+        type: String,
+        maxlength: 250,
+        trim: true
+    },
 })
 
 const BasketItem = mongoose.model('BasketItem', basketItemSchema)
