@@ -127,35 +127,66 @@ function addNewItemsToBasket(newBasketItems, basketId) {
     })
 
     return Promise.all(basketTransforms).then(newBasketItems => {
-        return db.Basket.findById(basketId).then((basket) => {
-            newBasketItems.forEach((basketItem) => {
-                // See if item already exists in database
-                let index = basket.items.findIndex((element) => {
-                    return element.itemDef._id.equals(basketItem.itemDef._id)
-                })
+        return createAddToBasketPromise(basketId, newBasketItems)
+    })
+}
 
-                // Item found in basket so update / add on to
-                if (index !== -1) {
-                    let currQuantity = basket.items[index].quantity
-                    basket.items[index].quantity = currQuantity + basketItem.quantity
+/**
+ * Creates a promise that will add new / update items in the basket
+ * @param {mongoose.ObjectId} basketId
+ * @param {Object[]} newBasketItems
+ * @param {Object} newBasketItems[].itemDef
+ * @param {mongoose.ObjectId} newBasketItems[].itemDef._id
+ * @param {String} newBasketItems[].itemDef.title
+ * @param {String} newBasketItems[].itemDef.category
+ * @param {Number} newBasketItems[].quantity
+ * @param {String} newBasketItems[].size
+ * @param {String} newBasketItems[].note
+ */
+function createAddToBasketPromise(basketId, newBasketItems) {
+    return db.Basket.findById(basketId).then((basket) => {
+        newBasketItems.forEach((basketItem) => {
+            // See if item already exists in database
+            let index = basket.items.findIndex((element) => {
+                const sameId = element.itemDef._id.equals(basketItem.itemDef._id)
+                const sameSize = element.size === basketItem.size
 
-                    if (basketItem.size) {
-                        basket.items[index].size = basketItem.size
-                    }
-
-                    if (basketItem.note) {
-                        basket.items[index].note = basketItem.note
-                    }
-
-                    return
-                }
-
-                basket.items.push(basketItem)
+                return sameId && sameSize
             })
 
-            return db.Basket.findByIdAndUpdate(basketId, { $set: { items: basket.items } })
+            // Item already exists in basket so update or add on to
+            if (index !== -1) {
+                addToExistingItem(basket.items[index], basketItem)
+                return
+            }
+
+            basket.items.push(basketItem)
         })
+
+        return db.Basket.findByIdAndUpdate(basketId, { $set: { items: basket.items } })
     })
+}
+
+/**
+ * Increases quantity and updates fields of basket item
+ * @param {mongoose.ObjectId} newBasketItems.itemDef._id
+ * @param {String} oldBasketItem.itemDef.title
+ * @param {String} oldBasketItem.itemDef.category
+ * @param {Number} oldBasketItem.quantity
+ * @param {String} oldBasketItem.size
+ * @param {String} oldBasketItem.note
+ * @param {String} newBasketItems.itemDef.title
+ * @param {String} newBasketItems.itemDef.category
+ * @param {Number} newBasketItems.quantity
+ * @param {String} newBasketItems.size
+ * @param {String} newBasketItems.note
+ */
+function addToExistingItem(oldBasketItem, newBasketItem) {
+    oldBasketItem.quantity += newBasketItem.quantity
+
+    if (newBasketItem.note) {
+        oldBasketItem.note += "\n\n" + newBasketItem.note
+    }
 }
 
 function modifyItemsInBasket(modItems, basketId) {
