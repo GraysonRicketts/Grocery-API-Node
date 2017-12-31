@@ -12,7 +12,7 @@ const basketSchema = new Schema({
         required: true
     },
     items: {
-        type: [ BasketItem.Schema ],
+        type: [BasketItem.Schema],
         default: []
     },
     isDeleted: { type: Boolean, default: false },
