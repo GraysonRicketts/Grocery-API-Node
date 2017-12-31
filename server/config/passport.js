@@ -8,31 +8,27 @@ const LocalStrategy = require('passport-local').Strategy
 const passwordError = 'User and/or password incorrect'
 
 passport.use(new LocalStrategy({
-        usernameField: 'email'
-    }, (email, password, done) => {
-        db.User.findOne({ email }).exec()
-            .then((user) => {
-                if (!user) {
-                    return done(null, false, { message: passwordError })
-                }
+    usernameField: 'email'
+}, (email, password, done) => {
+    db.User.findOne({ email }).exec()
+        .then((user) => {
+            if (!user) {
+                return done(null, false, { message: passwordError })
+            }
 
-                checkUserPassword(password, user, done)
-            })
-            .catch((err) => {
-                done(err)
-            })
-    }))
+            checkUserPassword(password, user, done)
+        })
+        .catch((err) => {
+            done(err)
+        })
+}))
 
 passport.serializeUser((user, done) => {
-    const sessionUser = {
-        id: user._id,
-        basketId: user._basket
-    }
-    done(null, sessionUser)
+    done(null, user._id)
 })
 
-passport.deserializeUser((sessionUser, done) => {
-    done(null, sessionUser)
+passport.deserializeUser((userId, done) => {
+    done(null, userId)
 })
 
 /**
