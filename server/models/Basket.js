@@ -6,8 +6,13 @@ import BasketItem from './BasketItem'
 const { Schema } = mongoose
 
 const basketSchema = new Schema({
-    user: { 
-        type: Schema.Types.ObjectId,
+    users: {
+        type: [Schema.Types.ObjectId],
+        ref: 'User',
+        required: true
+    },
+    invited: {
+        type: [Schema.Types.ObjectId],
         ref: 'User',
         required: true
     },
