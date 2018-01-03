@@ -5,18 +5,19 @@ import db from './../models/'
 const basketController = {}
 
 basketController.get = function getBasket(req, res) {
-    db.Basket.findById(req.user.basketId)
+    db.Basket.findById(req.params.basketId)
         .then((basket) => {
-            if (basket) {
-                res.status(200).json({
-                    basket
-                })
-            } else {
-                res.status(500).json({
+            if (!basket) {
+                res.status(404).json({
                     success: false
                 })
+                return
             }
 
+            res.status(200).json({
+                basket,
+                success: true
+            })
         })
         .catch((err) => {
             console.error(err)
@@ -37,7 +38,7 @@ basketController.post = function postToBasket(req, res) {
         return
     }
 
-    addNewItemsToBasket(delta.newItems, req.user.basketId).then(() => {
+    addNewItemsToBasket(delta.newItems, req.params.basketId).then(() => {
             res.status(201).json({
                 success: true
             })
@@ -61,7 +62,7 @@ basketController.put = function putInBasket(req, res) {
         return
     }
 
-    let modifyPromises = modifyItemsInBasket(delta.modItems, req.user.basketId)
+    let modifyPromises = modifyItemsInBasket(delta.modItems, req.params.basketId)
 
     Promise.all(modifyPromises).then((mods) => {
             res.status(200).json({
@@ -87,7 +88,7 @@ basketController.delete = function deleteFromBasket(req, res) {
         return
     }
 
-    let deletePromises = deleteItemsInBasket(delta.deletedItems, req.user.basketId)
+    let deletePromises = deleteItemsInBasket(delta.deletedItems, req.params.basketId)
 
     Promise.all(deletePromises).then((deletions) => {
             res.status(200).json({
