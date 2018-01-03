@@ -42,6 +42,10 @@ userController.signup = (req, res) => {
                     basket
                         .save()
                         .then((newBasket) => {
+                                if (!newBasket) {
+                                    throw new Error("Failed to create a new basket when creating a new user")
+                                }
+
                             req.login(newUser, () => {
                                     res.status(200).json({
                                         success: true
