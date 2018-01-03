@@ -9,7 +9,7 @@ const userController = {};
 userController.login = (req, res) => {
     db.User.findById(req.user).then((user) => {
             res.status(200).json(loginResponse(user))
-    })
+        })
         .catch((err) => {
             console.error(err)
             res.status(500).json({
@@ -20,9 +20,9 @@ userController.login = (req, res) => {
 }
 
 userController.signup = (req, res) => {
-    const { 
+    const {
         email,
-        password 
+        password
     } = req.body
 
     // TODO: Validate input
@@ -31,47 +31,46 @@ userController.signup = (req, res) => {
     // Hash password
     bcrypt.genSalt(parseInt(process.env.SALT_ROUNDS)).then((salt) => {
         bcrypt.hash(password, salt).then((hash) => {
-            let user = new db.User({
-                email,
-                password: hash
-            })
+                let user = new db.User({
+                    email,
+                    password: hash
+                })
 
-            const basket = new db.Basket({
+                const basket = new db.Basket({
                     users: [user._id]
-            })
+                })
 
-            user._basket = basket._id
+                user.baskets.push(basket._id)
 
-            // Save user
-            user.save()
-                .then((newUser) => {
-                    // Create new Basket associated with user
-                    basket
-                        .save()
-                        .then((newBasket) => {
+                // Save user
+                user.save()
+                    .then((newUser) => {
+                        // Create new Basket associated with user
+                        basket
+                            .save()
+                            .then((newBasket) => {
                                 if (!newBasket) {
                                     throw new Error("Failed to create a new basket when creating a new user")
                                 }
 
-                            req.login(newUser, () => {
+                                req.login(newUser, () => {
                                     res.status(200).json(loginResponse(newUser))
-                                    })
                                 })
-                        })
-                        .catch((err) => {
-                            // TODO: Remove user b/c basket creation failed
-                                console.error(err)
-                            res.status(500).json({
-                                    success: false
                             })
-                        })
-                })
-                .catch((err) => {
-                        console.error(err)
-                    res.status(500).json({
-                            success: false
+                            .catch((err) => {
+                                // TODO: Remove user b/c basket creation failed
+                                console.error(err)
+                                res.status(500).json({
+                                    success: false
+                                })
+                            })
                     })
-                })
+                    .catch((err) => {
+                        console.error(err)
+                        res.status(500).json({
+                            success: false
+                        })
+                    })
             })
             .catch((err) => {
                 console.error(err)
@@ -79,11 +78,11 @@ userController.signup = (req, res) => {
                     success: false
                 })
             })
-        })
+    })
 }
 
 userController.logout = (req, res) => {
-    req.logout()    
+    req.logout()
     req.session.destroy(() => {
         res.status(200).json({
             success: true
