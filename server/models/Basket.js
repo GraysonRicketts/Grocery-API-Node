@@ -14,7 +14,7 @@ const basketSchema = new Schema({
     invited: {
         type: [Schema.Types.ObjectId],
         ref: 'User',
-        required: true
+        default: []
     },
     items: {
         type: [BasketItem.Schema],
