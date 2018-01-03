@@ -19,7 +19,7 @@ userController.login = (req, res) => {
 
 }
 
-userController.signup = (req, res) => {
+userController.signup = async(req, res) => {
     const {
         email,
         password
@@ -29,56 +29,56 @@ userController.signup = (req, res) => {
     // TODO: Password must be less than 72 character for encryption
 
     // Hash password
-    bcrypt.genSalt(parseInt(process.env.SALT_ROUNDS)).then((salt) => {
-        bcrypt.hash(password, salt).then((hash) => {
-                let user = new db.User({
-                    email,
-                    password: hash
-                })
+    let hash = {}
+    try {
+        const salt = await bcrypt.genSalt(parseInt(process.env.SALT_ROUNDS))
+        hash = await bcrypt.hash(password, salt)
+    } catch (err) {
+        console.error(err)
+        res.status(500).json({
+            success: false
+        })
+        return
+    }
 
-                const basket = new db.Basket({
-                    users: [user._id]
-                })
-
-                user.baskets.push(basket._id)
-
-                // Save user
-                user.save()
-                    .then((newUser) => {
-                        // Create new Basket associated with user
-                        basket
-                            .save()
-                            .then((newBasket) => {
-                                if (!newBasket) {
-                                    throw new Error("Failed to create a new basket when creating a new user")
-                                }
-
-                                req.login(newUser, () => {
-                                    res.status(200).json(loginResponse(newUser))
-                                })
-                            })
-                            .catch((err) => {
-                                // TODO: Remove user b/c basket creation failed
-                                console.error(err)
-                                res.status(500).json({
-                                    success: false
-                                })
-                            })
-                    })
-                    .catch((err) => {
-                        console.error(err)
-                        res.status(500).json({
-                            success: false
-                        })
-                    })
-            })
-            .catch((err) => {
-                console.error(err)
-                res.status(500).json({
-                    success: false
-                })
-            })
+    let user = new db.User({
+        email,
+        password: hash
     })
+    const basket = new db.Basket({
+        users: [user._id]
+    })
+    user.baskets.push(basket._id)
+
+    // Save user
+    user.save()
+        .then((newUser) => {
+            // Create new Basket associated with user
+            basket
+                .save()
+                .then((newBasket) => {
+                    if (!newBasket) {
+                        throw new Error("Failed to create a new basket when creating a new user")
+                    }
+
+                    req.login(newUser, () => {
+                        res.status(200).json(loginResponse(newUser))
+                    })
+                })
+                .catch((err) => {
+                    // TODO: Remove user b/c basket creation failed
+                    console.error(err)
+                    res.status(500).json({
+                        success: false
+                    })
+                })
+        })
+        .catch((err) => {
+            console.error(err)
+            res.status(500).json({
+                success: false
+            })
+        })
 }
 
 userController.logout = (req, res) => {
