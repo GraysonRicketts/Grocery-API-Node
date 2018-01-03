@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs'
 import db from './../models'
 
 
-const userController = {};
+const userController = {}
 
 
 userController.login = (req, res) => {
@@ -27,58 +27,52 @@ userController.signup = async(req, res) => {
 
     // TODO: Validate input
     // TODO: Password must be less than 72 character for encryption
-
-    // Hash password
-    let hash = {}
     try {
         const salt = await bcrypt.genSalt(parseInt(process.env.SALT_ROUNDS))
-        hash = await bcrypt.hash(password, salt)
+        const hash = await bcrypt.hash(password, salt)
+
+        let user = new db.User({
+            email,
+            password: hash
+        })
+        let basket = new db.Basket({
+            users: [user._id]
+        })
+        user.baskets.push(basket._id)
+
+        user.save().then(async(user) => {
+                if (!user) {
+                    throw new Error("Failed to save new user")
+                }
+                basket = await basket.save()
+                if (!basket) {
+                    user.remove().exec()
+                    throw new Error("Failed to create a new basket when creating a new user")
+                }
+
+                req.login(user, () => {
+                    res.status(200).json(loginResponse(user))
+                })
+            })
+            .catch((err) => {
+                if (err.name === "MongoError" && err.code === 11000) {
+                    const dupError = new Error("Attempted to add duplicate user: " + user.email)
+                    console.error(dupError)
+
+                    res.status(409).json({
+                        success: false
+                    })
+                    return
+                }
+
+                throw err
+            })
     } catch (err) {
         console.error(err)
         res.status(500).json({
             success: false
         })
-        return
     }
-
-    let user = new db.User({
-        email,
-        password: hash
-    })
-    const basket = new db.Basket({
-        users: [user._id]
-    })
-    user.baskets.push(basket._id)
-
-    // Save user
-    user.save()
-        .then((newUser) => {
-            // Create new Basket associated with user
-            basket
-                .save()
-                .then((newBasket) => {
-                    if (!newBasket) {
-                        throw new Error("Failed to create a new basket when creating a new user")
-                    }
-
-                    req.login(newUser, () => {
-                        res.status(200).json(loginResponse(newUser))
-                    })
-                })
-                .catch((err) => {
-                    // TODO: Remove user b/c basket creation failed
-                    console.error(err)
-                    res.status(500).json({
-                        success: false
-                    })
-                })
-        })
-        .catch((err) => {
-            console.error(err)
-            res.status(500).json({
-                success: false
-            })
-        })
 }
 
 userController.logout = (req, res) => {
