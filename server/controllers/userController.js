@@ -7,9 +7,16 @@ const userController = {};
 
 
 userController.login = (req, res) => {
-    res.status(200).json({
-        success: true,
+    db.User.findById(req.user).then((user) => {
+            res.status(200).json(loginResponse(user))
     })
+        .catch((err) => {
+            console.error(err)
+            res.status(500).json({
+                success: false
+            })
+        })
+
 }
 
 userController.signup = (req, res) => {
@@ -30,7 +37,7 @@ userController.signup = (req, res) => {
             })
 
             const basket = new db.Basket({
-                user: user._id
+                    users: [user._id]
             })
 
             user._basket = basket._id
@@ -47,8 +54,7 @@ userController.signup = (req, res) => {
                                 }
 
                             req.login(newUser, () => {
-                                    res.status(200).json({
-                                        success: true
+                                    res.status(200).json(loginResponse(newUser))
                                     })
                                 })
                         })
@@ -92,5 +98,12 @@ userController.logout = (req, res) => {
 // userController.put = (req, res) => {
 //     // TODO: Allow password or email to be reset
 // }
+
+function loginResponse(user) {
+    return {
+        baskets: user.baskets,
+        success: true
+    }
+}
 
 export default userController
