@@ -14,6 +14,13 @@ basketController.get = function getBasket(req, res) {
                 return
             }
 
+            if (!isUserInUsersArray(basket.users, req.user)) {
+                res.status(403).json({
+                    success: false
+                })
+                return
+            }
+
             res.status(200).json({
                 basket,
                 success: true
@@ -29,6 +36,7 @@ basketController.get = function getBasket(req, res) {
 
 basketController.post = function postToBasket(req, res) {
     const delta = req.body.delta
+    const basketId = req.params.basketId
 
     if (!delta || !delta.newItems) {
         res.status(400).json({
@@ -38,7 +46,17 @@ basketController.post = function postToBasket(req, res) {
         return
     }
 
-    addNewItemsToBasket(delta.newItems, req.params.basketId).then(() => {
+    try {
+        if (!doesUserHaveAccesToBasket(req.user, basketId)) {
+            throw new { errorCode: 403 }
+        }
+    } catch (err) {
+        res.status(errorCode).json({
+            success: false
+        })
+    }
+
+    addNewItemsToBasket(delta.newItems, basketId).then(() => {
             res.status(201).json({
                 success: true
             })
@@ -60,6 +78,16 @@ basketController.put = function putInBasket(req, res) {
         })
 
         return
+    }
+
+    try {
+        if (!doesUserHaveAccesToBasket(req.user, basketId)) {
+            throw { errorCode: 403 }
+        }
+    } catch (err) {
+        res.status(errorCode).json({
+            success: false
+        })
     }
 
     let modifyPromises = modifyItemsInBasket(delta.modItems, req.params.basketId)
@@ -86,6 +114,16 @@ basketController.delete = function deleteFromBasket(req, res) {
         })
 
         return
+    }
+
+    try {
+        if (!doesUserHaveAccesToBasket(req.user, basketId)) {
+            throw new { errorCode: 403 }
+        }
+    } catch (err) {
+        res.status(errorCode).json({
+            success: false
+        })
     }
 
     let deletePromises = deleteItemsInBasket(delta.deletedItems, req.params.basketId)
@@ -226,6 +264,43 @@ function deleteItemsInBasket(deletedItems, basketId) {
     })
 
     return deletionPromises
+}
+
+/**
+ * Checks to see if the user has access to the basket
+ * @param {String} user
+ * @param {mongoose.ObjectId} basketId
+ * @returns {bool}
+ */
+async function doesUserHaveAccesToBasket(user, basketId) {
+    return await db.Basket.findById(basketId)
+        .then((basket) => {
+            if (!basket) {
+                throw { errorCode: 404 }
+            }
+
+            if (!isUserInUsersArray(basket.users, user)) {
+                return false
+            }
+
+            return true
+        })
+        .catch((err) => {
+            console.error(err)
+            throw { errorCode: 400 }
+        })
+}
+
+/**
+ * Checks to see if a user is in the basket
+ * @param {mongoose.ObjectId[]} basketUsers
+ * @param {String} requestingUser
+ * @returns {bool}
+ */
+async function isUserInUsersArray(basketUsers, requestingUser) {
+    return await basketUsers.find((user) => {
+        return element.toString() === requestingUser
+    })
 }
 
 export default basketController
