@@ -3,41 +3,19 @@ import express from 'express'
 // Controller Imports
 import basketController from './controllers/basketController'
 import userController from './controllers/userController'
-import passport from './config/passport'
-
+import passport, { authenticate } from './middleware/auth'
 
 const routes = express()
 
 // User Routes
-routes.post('/login', passport.authenticate('local'), userController.login)
+routes.post('/login', passport.authenticate('local', { session: false }), userController.login)
 routes.post('/signup', userController.signup)
-routes.post('/logout', authenticationMiddleware(true), userController.logout)
+routes.post('/logout', authenticate, userController.logout)
 
 // Bakset Routes
-routes.get('/basket/:basketId', authenticationMiddleware(true), basketController.get)
-routes.post('/basket/:basketId', authenticationMiddleware(true), basketController.post)
-routes.put('/basket/:basketId', authenticationMiddleware(true), basketController.put)
-routes.delete('/basket/:basketId', authenticationMiddleware(true), basketController.delete)
-
-function authenticationMiddleware(shouldAlreadyBeAuthenticated) {
-    return function(req, res, next) {
-        if (req.isAuthenticated()) {
-            if (shouldAlreadyBeAuthenticated) {
-                next()
-            } else {
-                res.status(400).json({
-                    success: false
-                })
-            }
-        } else {
-            if (!shouldAlreadyBeAuthenticated) {
-                next()
-            }
-            res.status(401).json({
-                success: false
-            })
-        }
-    }
-}
+routes.get('/basket/:basketId', authenticate, basketController.get)
+routes.post('/basket/:basketId', authenticate, basketController.post)
+routes.put('/basket/:basketId', authenticate, basketController.put)
+routes.delete('/basket/:basketId', authenticate, basketController.delete)
 
 export default routes;
