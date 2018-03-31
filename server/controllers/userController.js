@@ -1,23 +1,9 @@
 import bcrypt from 'bcryptjs'
-
+import passport from 'passport'
 import db from './../models'
 
 
 const userController = {}
-
-
-userController.login = (req, res) => {
-    db.User.findById(req.user).then((user) => {
-            res.status(200).json(loginResponse(user))
-        })
-        .catch((err) => {
-            console.error(err)
-            res.status(500).json({
-                success: false
-            })
-        })
-
-}
 
 userController.signup = async(req, res) => {
     const {
@@ -92,11 +78,6 @@ userController.logout = (req, res) => {
 //     // TODO: Allow password or email to be reset
 // }
 
-function loginResponse(user) {
-    return {
-        baskets: user.baskets,
-        success: true
-    }
-}
+
 
 export default userController

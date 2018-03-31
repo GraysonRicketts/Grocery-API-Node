@@ -1,8 +1,11 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-
-import routes from './routes'
-import passport from './middleware/auth'
+// import localSignupStrategy from './passport/localSignup'
+import { localLoginStrategy } from './passport/localLogin'
+import basketRoutes from './routes/basket'
+import authRoutes from './routes/auth'
+import passport from 'passport'
+import authCheckMiddleware from './middleware/auth-check'
 
 const app = express()
 
@@ -11,11 +14,14 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
     extended: false
 }))
-
-// Authentication
 app.use(passport.initialize())
 
+// Authentication
+passport.use('local-login', localLoginStrategy)
+
+
 // Routes
-app.use('/api', routes)
+app.use('/auth', authRoutes)
+app.use('/api', authCheckMiddleware, basketRoutes)
 
 export default app
