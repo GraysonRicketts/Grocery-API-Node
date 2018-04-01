@@ -16,13 +16,18 @@ export function login(req, res, next) {
         })
     }
 
-    return authenticate(req, res, next)
-        .then((token, baskets) => res.status(200).json({
-            success: true,
-            token,
-            baskets
-        }))
-        .catch(err => res.status(400).json({success: false}))
+    return passport.authenticate('local-login', 
+        (err, token, baskets) => {
+            if (err) {
+                return res.status(400).json({success: false})
+            }
+
+            return res.status(200).json({
+                success: true,
+                token,
+                baskets
+            })
+        })(req, res, next)
 }
 
 export const localLoginStrategy = new LocalStrategy({
@@ -36,18 +41,19 @@ export const localLoginStrategy = new LocalStrategy({
     User.findOne({ email })
         .then((user) => {
             if (!user) {
-                throw invalidLoginError
+                done(invalidLoginError)
             }
 
             checkUserPassword(user, password).then((valid) => {
                 if (!valid) {
-                    throw invalidLoginError
+                    done(invalidLoginError)
                 }
 
                 const payload = { sub: user._id }
                 const token = jwt.sign(payload, jwtSecret)
+                const baskets = user.baskets
 
-                return done(token, user.baskets)
+                return done(null, token, baskets)
             })
         })
 })
@@ -63,9 +69,4 @@ function validateLoginForm(request) {
         success: isFormValid
     }
 }
-
-function authenticate(req, res, next) {
-    return new Promise(resolve => passport.authenticate('local-login', resolve)(req, res, next))
-}
-
 
