@@ -1,9 +1,9 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-// import localSignupStrategy from './passport/localSignup'
+import { localSignupStrategy } from './passport/localSignup'
 import { localLoginStrategy } from './passport/localLogin'
-import basketRoutes from './routes/basket'
-import authRoutes from './routes/auth'
+import basketRoutes from './routes/basketRoutes'
+import authRoutes from './routes/authRoutes'
 import passport from 'passport'
 import authCheckMiddleware from './middleware/auth-check'
 
@@ -18,7 +18,7 @@ app.use(passport.initialize())
 
 // Authentication
 passport.use('local-login', localLoginStrategy)
-
+passport.use('local-signup', localSignupStrategy)
 
 // Routes
 app.use('/auth', authRoutes)

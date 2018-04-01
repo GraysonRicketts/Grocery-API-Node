@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import bcrypt from 'bcryptjs'
 
 const { Schema } = mongoose
 
@@ -10,7 +11,7 @@ const userSchema = new Schema({
     },
     password: {
         type: String,
-        minlength: [8, 'Password must be 8 characters or more.'],
+        minlength: [5, 'Password must be 5 characters or more.'],
         required: true,
     },
     baskets: {
@@ -26,6 +27,22 @@ const userSchema = new Schema({
     createdAt: { type: Date, default: Date.now },
 })
 
-const User = mongoose.model('User', userSchema)
+userSchema.pre('save', function saveHook(next) {
+    const user = this
+    const saltRound = parseInt(process.env.SALT_ROUNDS) || 3
 
+    if (!user.isModified('password')) {
+        return next()
+    }
+
+    return bcrypt.genSalt(saltRound)
+        .then(salt => bcrypt.hash(user.password, salt))
+        .then((hash) => {
+            user.password = hash
+            return next()
+        })
+    }
+)
+
+const User = mongoose.model('User', userSchema)
 export default User
