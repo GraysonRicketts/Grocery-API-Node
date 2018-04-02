@@ -1,4 +1,5 @@
 import { Strategy as LocalStrategy } from 'passport-local'
+import { login } from './localLogin'
 import passport from 'passport'
 import db from './../models'
 
@@ -13,14 +14,12 @@ export function signup(req, res, next) {
     })
   }
   
-  return passport.authenticate('local-signup', (err) => {
+  return passport.authenticate('local-signup', (err, user) => {
     if (err) {
       return res.status(400).json({success: false})
     }
 
-    return res.status(200).json({
-      success: true
-    })
+    return login(req, res, next)
   })(req, res, next)
 }
 
@@ -42,7 +41,7 @@ export const localSignupStrategy = new LocalStrategy({
     newUser.baskets.push(basket._id)
 
     newUser.save()
-      .then(() => done(null))
+      .then(() => done(null, newUser))
       .catch(err => done(err))
 })
 
