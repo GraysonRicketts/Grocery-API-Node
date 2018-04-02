@@ -35,12 +35,13 @@ export const localSignupStrategy = new LocalStrategy({
         email,
         password
     })
-    let basket = new db.Basket({
+    let newBasket = new db.Basket({
         users: [newUser._id]
     })
-    newUser.baskets.push(basket._id)
+    newUser.baskets.push(newBasket._id)
 
-    newUser.save()
+    newBasket.save()
+      .then(() => newUser.save())
       .then(() => done(null, newUser))
       .catch(err => done(err))
 })
