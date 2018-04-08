@@ -6,19 +6,11 @@ const basketController = {}
 
 basketController.get = function getBasket(req, res) {
     db.Basket.findById(req.params.basketId)
-        .then((basket) => {
+        .then(basket => {
             if (!basket) {
-                res.status(404).json({
+                return res.status(404).json({
                     success: false
                 })
-                return
-            }
-
-            if (!isUserInUsersArray(basket.users, req.user)) {
-                res.status(403).json({
-                    success: false
-                })
-                return
             }
 
             res.status(200).json({
@@ -46,16 +38,6 @@ basketController.post = function postToBasket(req, res) {
         return
     }
 
-    try {
-        if (!doesUserHaveAccesToBasket(req.user, basketId)) {
-            throw new { errorCode: 403 }
-        }
-    } catch (err) {
-        res.status(errorCode).json({
-            success: false
-        })
-    }
-
     addNewItemsToBasket(delta.newItems, basketId).then(() => {
             res.status(201).json({
                 success: true
@@ -78,16 +60,6 @@ basketController.put = function putInBasket(req, res) {
         })
 
         return
-    }
-
-    try {
-        if (!doesUserHaveAccesToBasket(req.user, basketId)) {
-            throw { errorCode: 403 }
-        }
-    } catch (err) {
-        res.status(errorCode).json({
-            success: false
-        })
     }
 
     let modifyPromises = modifyItemsInBasket(delta.modItems, req.params.basketId)
@@ -114,16 +86,6 @@ basketController.delete = function deleteFromBasket(req, res) {
         })
 
         return
-    }
-
-    try {
-        if (!doesUserHaveAccesToBasket(req.user, basketId)) {
-            throw new { errorCode: 403 }
-        }
-    } catch (err) {
-        res.status(errorCode).json({
-            success: false
-        })
     }
 
     let deletePromises = deleteItemsInBasket(delta.deletedItems, req.params.basketId)
@@ -289,18 +251,6 @@ async function doesUserHaveAccesToBasket(user, basketId) {
             console.error(err)
             throw { errorCode: 400 }
         })
-}
-
-/**
- * Checks to see if a user is in the basket
- * @param {mongoose.ObjectId[]} basketUsers
- * @param {String} requestingUser
- * @returns {bool}
- */
-async function isUserInUsersArray(basketUsers, requestingUser) {
-    return await basketUsers.find((user) => {
-        return element.toString() === requestingUser
-    })
 }
 
 export default basketController

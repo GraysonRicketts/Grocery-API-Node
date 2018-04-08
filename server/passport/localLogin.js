@@ -49,8 +49,11 @@ export const localLoginStrategy = new LocalStrategy({
                     done(invalidLoginError)
                 }
 
-                const payload = { sub: user._id }
-                const token = jwt.sign(payload, jwtSecret)
+                const payload = {
+                    sub: user._id,
+                    data: user.baskets[0]
+                }
+                const token = jwt.sign(payload, jwtSecret, { expiresIn: '1h' })
                 const baskets = user.baskets
 
                 return done(null, token, baskets)
