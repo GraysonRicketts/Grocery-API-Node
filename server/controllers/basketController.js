@@ -206,7 +206,8 @@ function modifyItemsInBasket(modItems, basketId) {
         let promise = db.Basket.update(query, {
             '$set': {
                 'items.$.number': basketItem.number,
-                'items.$.size': basketItem.size
+                'items.$.size': basketItem.size,
+                'items.$.note': basketItem.note
             }
         })
 
@@ -220,8 +221,6 @@ function deleteItemsInBasket(deletedItems, basketId) {
     let deletionPromises = []
 
     deletedItems.forEach((basketItem) => {
-        const itemToBeRemoved = 'items' + basketItem._id
-
         let promise = db.Basket.update({
             _id: mongoose.Types.ObjectId(basketId),
         }, {
