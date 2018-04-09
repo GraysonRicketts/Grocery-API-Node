@@ -1,4 +1,5 @@
 import db from './../models/'
+import mongoose from 'mongoose'
 
 
 // TODO: post, put, delete all have similiar pattern; possibly abstract and pullout
@@ -110,7 +111,7 @@ basketController.delete = function deleteFromBasket(req, res) {
  * @param {mongoose.ObjectId} newBasketItems[].itemDef._id
  * @param {String} newBasketItems[].itemDef.title
  * @param {String} newBasketItems[].itemDef.category
- * @param {Number} newBasketItems[].quantity
+ * @param {Number} newBasketItems[].number
  * @param {String} newBasketItems[].size
  * @param {String} newBasketItems[].note
  * @param {mongoose.ObjectId} basketId
@@ -140,7 +141,7 @@ function addNewItemsToBasket(newBasketItems, basketId) {
  * @param {mongoose.ObjectId} newBasketItems[].itemDef._id
  * @param {String} newBasketItems[].itemDef.title
  * @param {String} newBasketItems[].itemDef.category
- * @param {Number} newBasketItems[].quantity
+ * @param {Number} newBasketItems[].number
  * @param {String} newBasketItems[].size
  * @param {String} newBasketItems[].note
  */
@@ -169,21 +170,21 @@ function createAddToBasketPromise(basketId, newBasketItems) {
 }
 
 /**
- * Increases quantity and updates fields of basket item
+ * Increases number and updates fields of basket item
  * @param {mongoose.ObjectId} newBasketItems.itemDef._id
  * @param {String} oldBasketItem.itemDef.title
  * @param {String} oldBasketItem.itemDef.category
- * @param {Number} oldBasketItem.quantity
+ * @param {Number} oldBasketItem.number
  * @param {String} oldBasketItem.size
  * @param {String} oldBasketItem.note
  * @param {String} newBasketItems.itemDef.title
  * @param {String} newBasketItems.itemDef.category
- * @param {Number} newBasketItems.quantity
+ * @param {Number} newBasketItems.number
  * @param {String} newBasketItems.size
  * @param {String} newBasketItems.note
  */
 function addToExistingItem(oldBasketItem, newBasketItem) {
-    oldBasketItem.quantity += newBasketItem.quantity
+    oldBasketItem.number += newBasketItem.number
 
     if (newBasketItem.note) {
         oldBasketItem.note += "\n\n" + newBasketItem.note
@@ -194,12 +195,15 @@ function modifyItemsInBasket(modItems, basketId) {
     let modifyPromises = []
 
     modItems.forEach((basketItem) => {
-        let promise = db.Basket.update({
+        basketItem.number = parseInt(basketItem.number)
+        const query = {
             '_id': mongoose.Types.ObjectId(basketId),
             'items._id': mongoose.Types.ObjectId(basketItem._id)
-        }, {
+        }
+
+        let promise = db.Basket.update(query, {
             '$set': {
-                'items.$.quantity': basketItem.quantity,
+                'items.$.number': basketItem.number,
                 'items.$.size': basketItem.size
             }
         })
@@ -226,31 +230,6 @@ function deleteItemsInBasket(deletedItems, basketId) {
     })
 
     return deletionPromises
-}
-
-/**
- * Checks to see if the user has access to the basket
- * @param {String} user
- * @param {mongoose.ObjectId} basketId
- * @returns {bool}
- */
-async function doesUserHaveAccesToBasket(user, basketId) {
-    return await db.Basket.findById(basketId)
-        .then((basket) => {
-            if (!basket) {
-                throw { errorCode: 404 }
-            }
-
-            if (!isUserInUsersArray(basket.users, user)) {
-                return false
-            }
-
-            return true
-        })
-        .catch((err) => {
-            console.error(err)
-            throw { errorCode: 400 }
-        })
 }
 
 export default basketController

@@ -13,7 +13,7 @@ const basketItemSchema = new Schema({
         title: { type: String },
         category: { type: String }
     },
-    quantity: { type: Number },
+    number: { type: Number },
     size: { type: String },
     note: {
         type: String,

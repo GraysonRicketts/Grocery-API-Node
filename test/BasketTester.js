@@ -63,7 +63,7 @@ class BasketTester extends BaseTester {
                 itemDef: {
                     title: 'salmon'
                 },
-                quantity: 2,
+                number: 2,
                 size: '6 oz'
             })
 
@@ -95,7 +95,7 @@ class BasketTester extends BaseTester {
 
                     // Checks
                     items.length.should.be.eql(1)
-                    items[0].quantity.should.be.eql(2)
+                    items[0].number.should.be.eql(2)
                     items[0].itemDef.title.should.be.eql('salmon')
 
                     done()
@@ -117,7 +117,7 @@ class BasketTester extends BaseTester {
 
                     // Modify item
                     let modifiedItem = res.body.basket.items[0]
-                    modifiedItem.quantity = 300
+                    modifiedItem.number = 300
 
                     // Create delta
                     let items = {
