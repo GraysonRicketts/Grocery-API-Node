@@ -4,18 +4,19 @@ import mongoose from 'mongoose'
 const { Schema } = mongoose
 
 const Categories = [
-    'dairy',
-    'produce',
-    'meat',
-    'seafood',
-    'frozen',
-    'beer/wine/liquor',
-    'dry goods/pantry',
-    'other'
+    'Dairy',
+    'Produce',
+    'Meat',
+    'Seafood',
+    'Frozen',
+    'Beer/wine/liquor',
+    'Dry Goods / Pantry',
+    'Other',
+    'Uncategorized'
 ]
 
 const itemSchema = new Schema({
-    title: {
+    name: {
         type: String,
         required: true
     },

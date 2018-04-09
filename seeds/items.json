@@ -1,24 +1,24 @@
 {
-    "title": "apple",
-    "category": "produce",
+    "name": "apple",
+    "category": "Produce",
     "note": "lookin' good"
 } {
-    "title": "2% milk",
-    "category": "dairy"
+    "name": "2% milk",
+    "category": "Dairy"
 } {
-    "title": "porterhouse steak",
-    "category": "meat"
+    "name": "porterhouse steak",
+    "category": "Meat"
 } {
-    "title": "salmon",
-    "category": "seafood",
+    "name": "salmon",
+    "category": "Seafood",
     "note": "the best ** Trump voice **"
 } {
-    "title": "peas",
-    "category": "frozen"
+    "name": "peas",
+    "category": "Frozen"
 } {
-    "title": "absolut vodka",
-    "category": "beer/wine/liquor"
+    "name": "absolut vodka",
+    "category": "Beer/wine/liquor"
 } {
-    "title": "pasta",
-    "category": "dry goods/pantry"
+    "name": "pasta",
+    "category": "Dry Goods / Pantry"
 }

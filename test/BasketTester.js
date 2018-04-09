@@ -61,7 +61,7 @@ class BasketTester extends BaseTester {
 
             items.delta.newItems.push({
                 itemDef: {
-                    title: 'salmon'
+                    name: 'salmon'
                 },
                 number: 2,
                 size: '6 oz'
@@ -96,7 +96,7 @@ class BasketTester extends BaseTester {
                     // Checks
                     items.length.should.be.eql(1)
                     items[0].number.should.be.eql(2)
-                    items[0].itemDef.title.should.be.eql('salmon')
+                    items[0].itemDef.name.should.be.eql('salmon')
 
                     done()
                 })

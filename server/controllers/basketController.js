@@ -109,7 +109,7 @@ basketController.delete = function deleteFromBasket(req, res) {
  * @param {Object[]} newBasketItems
  * @param {Object} newBasketItems[].itemDef
  * @param {mongoose.ObjectId} newBasketItems[].itemDef._id
- * @param {String} newBasketItems[].itemDef.title
+ * @param {String} newBasketItems[].itemDef.name
  * @param {String} newBasketItems[].itemDef.category
  * @param {Number} newBasketItems[].number
  * @param {String} newBasketItems[].size
@@ -119,9 +119,11 @@ basketController.delete = function deleteFromBasket(req, res) {
 function addNewItemsToBasket(newBasketItems, basketId) {
     // Get items if they already exist in database
     const basketTransforms = newBasketItems.map(async(basketItem) => {
-        let itemDef = await db.Item.findOne(basketItem.itemDef)
+        let itemDef = await db.Item.findOne({
+            name: basketItem.name
+        })
         if (!itemDef) {
-            itemDef = new db.Item(basketItem.itemDef)
+            itemDef = new db.Item(basketItemDef)
         }
 
         basketItem.itemDef = itemDef
@@ -139,7 +141,7 @@ function addNewItemsToBasket(newBasketItems, basketId) {
  * @param {Object[]} newBasketItems
  * @param {Object} newBasketItems[].itemDef
  * @param {mongoose.ObjectId} newBasketItems[].itemDef._id
- * @param {String} newBasketItems[].itemDef.title
+ * @param {String} newBasketItems[].itemDef.name
  * @param {String} newBasketItems[].itemDef.category
  * @param {Number} newBasketItems[].number
  * @param {String} newBasketItems[].size
@@ -172,12 +174,12 @@ function createAddToBasketPromise(basketId, newBasketItems) {
 /**
  * Increases number and updates fields of basket item
  * @param {mongoose.ObjectId} newBasketItems.itemDef._id
- * @param {String} oldBasketItem.itemDef.title
+ * @param {String} oldBasketItem.itemDef.name
  * @param {String} oldBasketItem.itemDef.category
  * @param {Number} oldBasketItem.number
  * @param {String} oldBasketItem.size
  * @param {String} oldBasketItem.note
- * @param {String} newBasketItems.itemDef.title
+ * @param {String} newBasketItems.itemDef.name
  * @param {String} newBasketItems.itemDef.category
  * @param {Number} newBasketItems.number
  * @param {String} newBasketItems.size

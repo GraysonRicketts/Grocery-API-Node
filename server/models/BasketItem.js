@@ -10,7 +10,7 @@ const basketItemSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'Item'
         },
-        title: { type: String },
+        name: { type: String },
         category: { type: String }
     },
     number: { type: Number },
