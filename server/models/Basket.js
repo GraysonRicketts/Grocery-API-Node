@@ -22,7 +22,7 @@ const basketSchema = new Schema({
     },
     isDeleted: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
-})
+}, { usePushEach: true })
 
 const Basket = mongoose.model('Basket', basketSchema)
 

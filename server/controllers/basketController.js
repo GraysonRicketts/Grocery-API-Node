@@ -31,22 +31,60 @@ basketController.post = function postToBasket(req, res) {
     const delta = req.body.delta
     const basketId = req.params.basketId
 
-    if (!delta || !delta.newItems) {
-        res.status(400).json({
+    if (!delta || !delta.newItem) {
+        return res.status(400).json({
             success: false
         })
-
-        return
     }
 
-    addNewItemsToBasket(delta.newItems, basketId).then(() => {
-            res.status(201).json({
-                success: true
+    let { newItem } = delta
+
+    // See if item already exists in database
+    db.Item.findOne({ name: newItem.name })
+        .then((itemDef) => {
+            if (!itemDef) {
+                itemDef = new db.Item({
+                    name: newItem.name,
+                    category: 'Uncategorized'
+                })
+            }
+
+            return itemDef
+        })
+        .then((itemDef) => {
+            let basketItem = {}
+            basketItem.itemDef = itemDef
+            basketItem.number = newItem.number
+
+            newItem = new db.BasketItem(basketItem)
+        })
+        // See if the item exists in the basket already
+        .then(() => db.Basket.findById(basketId))
+        .then((basket) => {
+            let index = basket.items.findIndex((element) => {
+                const sameId = element.itemDef._id.equals(newItem.itemDef._id)
+                const sameSize = element.size === newItem.size
+
+                return sameId && sameSize
+            })
+
+            // Item already exists in basket so update or add on to
+            if (index !== -1) {
+                addToExistingItem(basket.items[index], newItem)
+            } else {
+                basket.items.push(newItem)
+            }
+
+            return basket.save()
+        })
+        .then(() => {
+            return res.status(200).json({
+                success: true,
+                newItem
             })
         })
         .catch((err) => {
-            console.error(err)
-            res.status(500).json({
+            return res.status(500).json({
                 success: false
             })
         })
@@ -102,73 +140,6 @@ basketController.delete = function deleteFromBasket(req, res) {
                 success: false
             })
         })
-}
-
-/**
- * Adds new objects to the database
- * @param {Object[]} newBasketItems
- * @param {Object} newBasketItems[].itemDef
- * @param {mongoose.ObjectId} newBasketItems[].itemDef._id
- * @param {String} newBasketItems[].itemDef.name
- * @param {String} newBasketItems[].itemDef.category
- * @param {Number} newBasketItems[].number
- * @param {String} newBasketItems[].size
- * @param {String} newBasketItems[].note
- * @param {mongoose.ObjectId} basketId
- */
-function addNewItemsToBasket(newBasketItems, basketId) {
-    // Get items if they already exist in database
-    const basketTransforms = newBasketItems.map(async(basketItem) => {
-        let itemDef = await db.Item.findOne({
-            name: basketItem.name
-        })
-        if (!itemDef) {
-            itemDef = new db.Item(basketItemDef)
-        }
-
-        basketItem.itemDef = itemDef
-        return new db.BasketItem(basketItem)
-    })
-
-    return Promise.all(basketTransforms).then(newBasketItems => {
-        return createAddToBasketPromise(basketId, newBasketItems)
-    })
-}
-
-/**
- * Creates a promise that will add new / update items in the basket
- * @param {mongoose.ObjectId} basketId
- * @param {Object[]} newBasketItems
- * @param {Object} newBasketItems[].itemDef
- * @param {mongoose.ObjectId} newBasketItems[].itemDef._id
- * @param {String} newBasketItems[].itemDef.name
- * @param {String} newBasketItems[].itemDef.category
- * @param {Number} newBasketItems[].number
- * @param {String} newBasketItems[].size
- * @param {String} newBasketItems[].note
- */
-function createAddToBasketPromise(basketId, newBasketItems) {
-    return db.Basket.findById(basketId).then((basket) => {
-        newBasketItems.forEach((basketItem) => {
-            // See if item already exists in database
-            let index = basket.items.findIndex((element) => {
-                const sameId = element.itemDef._id.equals(basketItem.itemDef._id)
-                const sameSize = element.size === basketItem.size
-
-                return sameId && sameSize
-            })
-
-            // Item already exists in basket so update or add on to
-            if (index !== -1) {
-                addToExistingItem(basket.items[index], basketItem)
-                return
-            }
-
-            basket.items.push(basketItem)
-        })
-
-        return db.Basket.findByIdAndUpdate(basketId, { $set: { items: basket.items } })
-    })
 }
 
 /**
