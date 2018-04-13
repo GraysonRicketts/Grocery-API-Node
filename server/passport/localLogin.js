@@ -53,7 +53,7 @@ export const localLoginStrategy = new LocalStrategy({
                     sub: user._id,
                     data: user.baskets[0]
                 }
-                const token = jwt.sign(payload, jwtSecret, { expiresIn: '1h' })
+                const token = jwt.sign(payload, jwtSecret, { expiresIn: '1d' })
                 const baskets = user.baskets
 
                 return done(null, token, baskets)
