@@ -20,6 +20,10 @@ const basketItemSchema = new Schema({
         maxlength: 250,
         trim: true
     },
+    checkedOff: {
+        type: Boolean,
+        default: false
+    }
 })
 
 const BasketItem = mongoose.model('BasketItem', basketItemSchema)

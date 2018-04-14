@@ -178,7 +178,8 @@ function modifyItemsInBasket(modItems, basketId) {
             '$set': {
                 'items.$.number': basketItem.number,
                 'items.$.size': basketItem.size,
-                'items.$.note': basketItem.note
+                'items.$.note': basketItem.note,
+                'items.$.checkedOff': basketItem.checkedOff
             }
         })
 
