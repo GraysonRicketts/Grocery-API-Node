@@ -174,19 +174,43 @@ function modifyItemsInBasket(modItems, basketId) {
             'items._id': mongoose.Types.ObjectId(basketItem._id)
         }
 
-        let promise = db.Basket.update(query, {
-            '$set': {
-                'items.$.number': basketItem.number,
-                'items.$.size': basketItem.size,
-                'items.$.note': basketItem.note,
-                'items.$.checkedOff': basketItem.checkedOff
-            }
-        })
+        let itemUpdate = {
+            'items.$.number': basketItem.number,
+            'items.$.size': basketItem.size,
+            'items.$.note': basketItem.note,
+            'items.$.checkedOff': basketItem.checkedOff
+        }
+
+        let promise = {}
+        if (basketItem.itemDef) {
+            promise = db.Item.findOne(basketItem.itemDef)
+                .then((item) => {
+                    let itemDef = item
+                    if (!itemDef) {
+                        itemDef = new db.Item(basketItem.itemDef)
+                    }
+
+                    itemUpdate['items.$.itemDef'] = itemDef
+
+                    return db.Basket.update(query, {
+                        '$set': itemUpdate
+                    })
+                })
+        }
+        else {
+            promise = db.Basket.update(query, {
+                '$set': itemUpdate
+            })
+        }
 
         modifyPromises.push(promise)
     })
 
     return modifyPromises
+}
+
+function createModifyPromise(query, update) {
+
 }
 
 function deleteItemsInBasket(deletedItems, basketId) {
