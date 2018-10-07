@@ -41,12 +41,12 @@ export const localLoginStrategy = new LocalStrategy({
     User.findOne({ email })
         .then((user) => {
             if (!user) {
-                done(invalidLoginError)
+                return done(invalidLoginError)
             }
 
             checkUserPassword(user, password).then((valid) => {
                 if (!valid) {
-                    done(invalidLoginError)
+                    return done(invalidLoginError)
                 }
 
                 const payload = {
